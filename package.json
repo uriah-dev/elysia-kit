@@ -2,11 +2,12 @@
   "name": "elysia-kit",
   "version": "1.0.50",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@t3-oss/env-core": "^0.13.10",
+    "elysia": "latest",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "bun-types": "latest"
