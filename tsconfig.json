@@ -4,15 +4,16 @@
 
     /* Modules */
     "module": "nodenext",
-    // "rootDir": "./",                                  /* Specify the root folder within your source files. */
     "moduleResolution": "nodenext",
-    // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
-    // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
-    // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
-    // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */
     "types": ["bun-types"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@app/*": ["src/app/*"],
+      "@lib/*": ["src/lib/*"]
+    },
 
     /* Type Checking */
     "strict": true,
