@@ -1,3 +1,4 @@
+import { env } from "@src/env";
 import z from "zod";
 
 export const hasValue = (value: unknown): value is string => {
@@ -32,3 +33,5 @@ export const getRoutePrefix = (name: string) => lower(name);
 
 export const getMetricKey = (routeName: string, metricName?: string) =>
   `${lower(routeName)}${hasValue(metricName) ? "_" + metricName : "_route"}`;
+
+export const getRouteName = () => `${env.APP_NAME}_routes`;

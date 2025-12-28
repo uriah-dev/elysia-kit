@@ -3,6 +3,13 @@ import { sayHello, sayHiPerson } from "./service";
 import { PersonSchema } from "./schema";
 import { createCounter } from "@lib/telemetry";
 import { getRoutePrefix, getMetricKey } from "@src/lib/utils";
+import { type Context, routes } from "..";
+
+export type HomeContext<T = {}> = Context<
+  {
+    metric: ReturnType<typeof createCounter>;
+  } & T
+>;
 
 const ROUTE_NAME = "Home";
 export const config = {
@@ -10,8 +17,13 @@ export const config = {
   prefix: getRoutePrefix(ROUTE_NAME),
 };
 
-export const home = new Elysia(config);
-export const metric = createCounter(getMetricKey(ROUTE_NAME));
+const metric = createCounter(getMetricKey(ROUTE_NAME));
+
+export const home = new Elysia(config)
+  .use(routes)
+  .derive({ as: "scoped" }, () => ({
+    metric,
+  }));
 
 home.get("/", sayHello);
 home.post("/", sayHiPerson, {
