@@ -10,8 +10,33 @@ distributor:
         http:
           endpoint: "0.0.0.0:4318"
 
+ingester:
+  max_block_duration: 5m
+
+querier:
+  search:
+    query_timeout: 30s
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+  storage:
+    path: /tmp/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true
+  processor:
+    local_blocks:
+      filter_server_spans: false
+
 storage:
   trace:
     backend: local
     local:
       path: /tmp/tempo/blocks
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors: [local-blocks, service-graphs, span-metrics]
