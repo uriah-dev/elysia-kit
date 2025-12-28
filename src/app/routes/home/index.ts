@@ -1,6 +1,10 @@
 import { Elysia } from "elysia";
-import { sayHello } from "./service";
+import { sayHello, sayHiPerson } from "./service";
+import { PersonSchema } from "./schema";
 
-export const home = new Elysia();
+export const home = new Elysia({ prefix: "home" });
 
 home.get("/", sayHello);
+home.post("/", sayHiPerson, {
+  body: PersonSchema,
+});

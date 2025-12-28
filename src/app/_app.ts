@@ -1,20 +1,13 @@
 import { Elysia } from "elysia";
-import { openapi, fromTypes } from "@elysiajs/openapi";
+import { openapi } from "@elysiajs/openapi";
 import { env } from "@src/env";
-import { home } from "./routes/home";
+import { routes } from "./routes";
 
-const app = new Elysia({ name: env.APP_NAME })
+export const app = new Elysia({ name: env.APP_NAME })
   .derive({ as: "global" }, ({ server, request }) => ({
     ip: server?.requestIP(request),
   }))
-  .use(
-    openapi({
-      references: fromTypes(),
-    })
-  );
+  .use(openapi())
+  .use(routes);
 
-home.use(app);
-
-export const server = new Elysia().use(home);
-
-export { app };
+export const server = app;
