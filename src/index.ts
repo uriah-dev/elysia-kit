@@ -1,7 +1,7 @@
 import { server } from "@app/_app";
 import { env } from "@src/env";
-import { logger } from "./lib/logger";
-import { buildServiceUrl } from "./lib/utils";
+import { logger } from "@lib/logger";
+import { buildServiceUrl } from "@lib/utils";
 
 export type Server = typeof server;
 
