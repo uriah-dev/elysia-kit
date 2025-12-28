@@ -20,10 +20,10 @@ export const config = {
 const metric = createCounter(getMetricKey(ROUTE_NAME));
 
 export const home = new Elysia(config)
-  .use(routes)
   .derive({ as: "scoped" }, () => ({
     metric,
-  }));
+  }))
+  .use(routes);
 
 home.get("/", sayHello);
 home.post("/", sayHiPerson, {

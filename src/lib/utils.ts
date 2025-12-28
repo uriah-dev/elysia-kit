@@ -29,6 +29,7 @@ export const buildFromSchema = <T extends z.ZodObject<any>>(
 };
 
 export const lower = (v: string) => v.toLowerCase();
+export const json = (v: any) => JSON.stringify(v);
 export const getRoutePrefix = (name: string) => lower(name);
 
 export const getMetricKey = (routeName: string, metricName?: string) =>
