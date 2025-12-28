@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { hasValue } from "./utils";
+import { init } from "@paralleldrive/cuid2";
+import { ID_CONFIG } from "@src/db/schema/helper";
 
 export const ErrorCodes = {
   VALIDATION_ERROR: "VALIDATION_ERROR",
@@ -53,3 +55,5 @@ export const apiError = (
       details: hasValue(details) ? details : undefined,
     },
   }) as ErrorResponse;
+
+export const createId = init(ID_CONFIG);

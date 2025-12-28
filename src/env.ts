@@ -2,7 +2,7 @@ import { z } from "zod";
 import { buildFromSchema, getEnvValue } from "@lib/env-utils";
 
 const EnvSchema = z.object({
-  DATABASE_URL: z.url(),
+  DATABASE_URL: z.string(),
   APP_PORT: z.coerce.number(),
   APP_NAME: z.coerce.string(),
   APP_URL: z.url(),
@@ -12,6 +12,7 @@ const EnvSchema = z.object({
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
+
   // Telemetry ports
   TEMPO_UI_PORT: z.coerce.number().default(3200),
   TEMPO_OTLP_GRPC_PORT: z.coerce.number().default(4317),

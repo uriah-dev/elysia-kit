@@ -1,6 +1,7 @@
 import { Elysia } from "elysia";
 import { logger } from "@src/lib/logger";
 import { getRouteName } from "@src/lib/utils";
+import { db } from "@src/db";
 
 const deriveHandler = ({
   server,
@@ -9,6 +10,7 @@ const deriveHandler = ({
   logger,
   startTime: Date.now(),
   ip: server?.requestIP(request),
+  db,
 });
 
 const name = getRouteName();

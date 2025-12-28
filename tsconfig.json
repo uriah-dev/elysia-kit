@@ -13,7 +13,8 @@
       "@src/*": ["src/*"],
       "@app/*": ["src/app/*"],
       "@lib/*": ["src/lib/*"],
-      "@routes/*": ["src/app/routes/*"]
+      "@routes/*": ["src/app/routes/*"],
+      "@db/*": ["src/db/*"]
     },
 
     /* Type Checking */
