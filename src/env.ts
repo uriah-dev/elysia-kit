@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { buildFromSchema, getEnvValue } from "@lib/utils";
+import { buildFromSchema, getEnvValue } from "@lib/env-utils";
 
 const EnvSchema = z.object({
   DATABASE_URL: z.url(),
