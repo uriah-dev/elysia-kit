@@ -1,6 +1,6 @@
 {
   "name": "elysia-kit",
-  "version": "1.0.50",
+  "version": "0.0.1",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "generate:prometheus": "bun run scripts/generate-prometheus-config.ts",
