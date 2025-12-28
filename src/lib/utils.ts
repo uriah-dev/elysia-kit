@@ -12,12 +12,23 @@ export const getEnvValue = (key: string) => {
   return value;
 };
 
+export const getOptionalEnvValue = (key: string) => {
+  const value = Bun.env[key];
+  return hasValue(value) ? value : undefined;
+};
+
 export const buildFromSchema = <T extends z.ZodObject<any>>(
   schema: T,
-  getValue: (key: string) => string
-): Record<string, string> => {
+  getValue: (key: string) => string | undefined
+): Record<string, string | undefined> => {
   return Object.keys(schema.shape).reduce((acc, key) => {
     acc[key] = getValue(key);
     return acc;
-  }, {} as Record<string, string>);
+  }, {} as Record<string, string | undefined>);
 };
+
+export const lower = (v: string) => v.toLowerCase();
+export const getRoutePrefix = (name: string) => lower(name);
+
+export const getMetricKey = (routeName: string, metricName?: string) =>
+  `${lower(routeName)}${hasValue(metricName) ? "_" + metricName : "_route"}`;
