@@ -1,20 +1,47 @@
 import pino from "pino";
 import { env } from "@src/env";
 
-export const logger = pino({
-  name: env.APP_NAME,
-  level: env.LOG_LEVEL,
-  transport:
-    env.NODE_ENV === "development"
-      ? {
-          target: "pino-pretty",
-          options: {
-            colorize: true,
-            translateTime: "SYS:standard",
-            ignore: "pid,hostname",
-          },
-        }
-      : undefined,
-});
+const getTransport = () => {
+  const targets: pino.TransportTargetOptions[] = [];
+
+  // Pretty print in development
+  if (env.NODE_ENV === "development") {
+    targets.push({
+      target: "pino-pretty",
+      options: {
+        colorize: true,
+        translateTime: "SYS:standard",
+        ignore: "pid,hostname",
+      },
+      level: env.LOG_LEVEL,
+    });
+  }
+
+  // Send logs to Loki
+  targets.push({
+    target: "pino-loki",
+    options: {
+      batching: true,
+      interval: 5,
+      host: `http://localhost:${env.LOKI_PORT}`,
+      labels: {
+        app: env.APP_NAME,
+        env: env.NODE_ENV,
+      },
+      silenceErrors: false,
+    },
+    level: env.LOG_LEVEL,
+  });
+
+  return pino.transport({ targets });
+};
+
+export const logger = pino(
+  {
+    name: env.APP_NAME,
+    level: env.LOG_LEVEL,
+  },
+  getTransport()
+);
 
 export type Logger = typeof logger;
