@@ -12,6 +12,15 @@ export const ErrorCodes = {
   BAD_REQUEST: "BAD_REQUEST",
 } as const;
 
+export const ErrorStatusCodes: Record<ErrorCodesType, number> = {
+  VALIDATION_ERROR: 422,
+  NOT_FOUND: 404,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  INTERNAL_ERROR: 500,
+  BAD_REQUEST: 400,
+};
+
 export const SuccessResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
     success: z.literal(true),
@@ -31,7 +40,8 @@ export const ErrorResponseSchema = z.object({
 export type SuccessResponse<T> = z.infer<
   ReturnType<typeof SuccessResponseSchema<z.ZodType<T>>>
 >;
-export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
+export type ErrorResponseBody = z.infer<typeof ErrorResponseSchema>;
+export type ErrorResponse = Response;
 export type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
 export type ErrorCodesType = keyof typeof ErrorCodes;
 
@@ -46,14 +56,53 @@ export const apiError = (
   code: ErrorCodesType,
   message: string,
   details?: unknown
-): ErrorResponse =>
-  ErrorResponseSchema.parse({
+): Response => {
+  const status = ErrorStatusCodes[code];
+  const body: ErrorResponseBody = {
     success: false,
     error: {
       code,
       message,
       details: hasValue(details) ? details : undefined,
     },
-  }) as ErrorResponse;
+  };
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+type APITryWrapperOptions = {
+  errorCode?: ErrorCodesType;
+  errorMessage?: string;
+  onError?: (error: any) => ErrorResponse | null;
+};
+
+type APITryWrapperResult<T> = Promise<SuccessResponse<T> | ErrorResponse>;
+
+export const apiTryWrapper = async <T>(
+  fn: () => Promise<T | SuccessResponse<T> | ErrorResponse>,
+  options?: APITryWrapperOptions
+): APITryWrapperResult<T> => {
+  try {
+    const result = await fn();
+
+    if (hasValue(result)) {
+      return result as SuccessResponse<T> | ErrorResponse;
+    }
+
+    return apiSuccess(result as T);
+  } catch (error: any) {
+    if (options?.onError) {
+      const customResponse = options.onError(error);
+      if (customResponse) return customResponse;
+    }
+    return apiError(
+      options?.errorCode || "INTERNAL_ERROR",
+      options?.errorMessage || error.message || "An error occurred",
+      error.message
+    );
+  }
+};
 
 export const createId = init(ID_CONFIG);

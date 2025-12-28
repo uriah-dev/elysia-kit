@@ -2,8 +2,8 @@ import { Elysia } from "elysia";
 import { sayHello, sayHiPerson } from "./service";
 import { PersonSchema } from "./schema";
 import { createCounter } from "@lib/telemetry";
-import { getRoutePrefix, getMetricKey } from "@src/lib/utils";
-import { type Context, routes } from "..";
+import { getMetricKey } from "@src/lib/utils";
+import { type Context, routes } from "@routes/index";
 
 export type HomeContext<T = {}> = Context<
   {
@@ -14,7 +14,6 @@ export type HomeContext<T = {}> = Context<
 const ROUTE_NAME = "Home";
 export const config = {
   name: ROUTE_NAME,
-  prefix: getRoutePrefix(ROUTE_NAME),
 };
 
 const metric = createCounter(getMetricKey(ROUTE_NAME));
