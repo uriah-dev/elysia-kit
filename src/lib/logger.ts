@@ -1,5 +1,6 @@
 import pino from "pino";
 import { env } from "@src/env";
+import { buildServiceUrl } from "./utils";
 
 const getTransport = () => {
   const targets: pino.TransportTargetOptions[] = [];
@@ -23,7 +24,7 @@ const getTransport = () => {
     options: {
       batching: true,
       interval: 5,
-      host: `http://localhost:${env.LOKI_PORT}`,
+      host: buildServiceUrl(env.LOKI_PORT),
       labels: {
         app: env.APP_NAME,
         env: env.NODE_ENV,

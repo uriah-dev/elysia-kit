@@ -6,18 +6,21 @@ import { MeterProvider } from "@opentelemetry/sdk-metrics";
 import { metrics } from "@opentelemetry/api";
 import { env } from "@src/env";
 import type { HTTPMethod } from "elysia";
-import { hasValue } from "./utils";
+import { hasValue, buildServiceUrl } from "./utils";
 import { logger } from "./logger";
 
 const traceExporter = new OTLPTraceExporter({
-  url: `http://localhost:${env.TEMPO_OTLP_HTTP_PORT}/v1/traces`,
+  url: buildServiceUrl(env.TEMPO_OTLP_HTTP_PORT, "/v1/traces"),
 });
 
 const metricsExporter = new PrometheusExporter(
   { port: env.METRICS_EXPORTER_PORT },
   () => {
     logger.info(
-      `📊 Prometheus metrics available at http://localhost:${env.METRICS_EXPORTER_PORT}/metrics`
+      `📊 Prometheus metrics available at ${buildServiceUrl(
+        env.METRICS_EXPORTER_PORT,
+        "/metrics"
+      )}`
     );
   }
 );
