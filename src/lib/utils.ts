@@ -33,3 +33,5 @@ export const buildServiceUrl = (port: number, path = "") => {
   const base = getBaseUrl();
   return `${base}:${port}${path}`;
 };
+
+export const isDevEnv = () => env.NODE_ENV === "development";

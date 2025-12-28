@@ -1,6 +1,6 @@
 import pino from "pino";
 import { env } from "@src/env";
-import { buildServiceUrl } from "./utils";
+import { buildServiceUrl, isDevEnv } from "./utils";
 
 const getTransport = () => {
   const targets: pino.TransportTargetOptions[] = [
@@ -20,7 +20,7 @@ const getTransport = () => {
     },
   ];
 
-  if (env.NODE_ENV === "development") {
+  if (isDevEnv()) {
     targets.push({
       target: "pino-pretty",
       options: {
