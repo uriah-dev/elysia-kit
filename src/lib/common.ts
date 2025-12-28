@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { hasValue } from "./utils";
 import { init } from "@paralleldrive/cuid2";
-import { ID_CONFIG } from "@src/db/schema/helper";
+
+export const ID_CONFIG = { length: 24 };
 
 export const ErrorCodes = {
   VALIDATION_ERROR: "VALIDATION_ERROR",

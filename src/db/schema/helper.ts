@@ -1,7 +1,5 @@
-import { createId } from "@src/lib/common";
+import { createId, ID_CONFIG } from "@src/lib/common";
 import { varchar, timestamp } from "drizzle-orm/pg-core";
-
-export const ID_CONFIG = { length: 24 };
 
 export const defaults = () => ({
   id: varchar("id", ID_CONFIG).$defaultFn(createId).primaryKey(),

@@ -1,11 +1,13 @@
 import z from "zod";
 
+const getEnv = () => (typeof Bun !== "undefined" ? Bun.env : process.env);
+
 export const hasValue = (value: unknown): value is string => {
   return value !== 0 && !!value;
 };
 
 export const getEnvValue = (key: string) => {
-  const value = Bun.env[key];
+  const value = getEnv()[key];
   if (!hasValue(value)) {
     throw new ReferenceError(`${key}: Missing Env Variable`);
   }
@@ -13,7 +15,7 @@ export const getEnvValue = (key: string) => {
 };
 
 export const getOptionalEnvValue = (key: string) => {
-  const value = Bun.env[key];
+  const value = getEnv()[key];
   return hasValue(value) ? value : undefined;
 };
 

@@ -9,8 +9,19 @@ export const usersTable = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
 });
 
-export const UsersSelectSchema = createSelectSchema(usersTable);
-export const UsersInsertSchema = createInsertSchema(usersTable);
+const dateAsString = z.iso.datetime();
+
+export const UsersSelectSchema = createSelectSchema(usersTable, {
+  createdAt: dateAsString,
+  updatedAt: dateAsString,
+});
+
+export const UsersInsertSchema = createInsertSchema(usersTable).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const UsersUpdateSchema = UsersInsertSchema.partial();
 
 export type User = z.infer<typeof UsersSelectSchema>;
