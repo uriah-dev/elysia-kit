@@ -3,9 +3,23 @@ import { env } from "@src/env";
 import { buildServiceUrl } from "./utils";
 
 const getTransport = () => {
-  const targets: pino.TransportTargetOptions[] = [];
+  const targets: pino.TransportTargetOptions[] = [
+    {
+      target: "pino-loki",
+      options: {
+        batching: true,
+        interval: 5,
+        host: buildServiceUrl(env.LOKI_PORT),
+        labels: {
+          app: env.APP_NAME,
+          env: env.NODE_ENV,
+        },
+        silenceErrors: false,
+      },
+      level: env.LOG_LEVEL,
+    },
+  ];
 
-  // Pretty print in development
   if (env.NODE_ENV === "development") {
     targets.push({
       target: "pino-pretty",
@@ -17,22 +31,6 @@ const getTransport = () => {
       level: env.LOG_LEVEL,
     });
   }
-
-  // Send logs to Loki
-  targets.push({
-    target: "pino-loki",
-    options: {
-      batching: true,
-      interval: 5,
-      host: buildServiceUrl(env.LOKI_PORT),
-      labels: {
-        app: env.APP_NAME,
-        env: env.NODE_ENV,
-      },
-      silenceErrors: false,
-    },
-    level: env.LOG_LEVEL,
-  });
 
   return pino.transport({ targets });
 };
