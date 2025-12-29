@@ -1,12 +1,21 @@
+import { renderToReadableStream } from "react-dom/server";
+import { createElement } from "react";
 import { apiSuccess } from "@src/lib/common";
 import type { PersonType } from "./schema";
 import { addMetric } from "@src/lib/telemetry";
 import type { HomeContext } from ".";
+import { Home } from "@src/app/components/home";
 
-export const sayHello = ({ logger, metric }: HomeContext) => {
+
+export const sayHello = async ({ logger, metric }: HomeContext) => {
   addMetric(metric, { endpoint: "/", method: "GET" });
   logger.info("Response success");
-  return "Hello Elysia";
+
+  const stream = await renderToReadableStream(createElement(Home));
+
+  return new Response(stream, {
+    headers: { "Content-Type": "text/html" },
+  });
 };
 
 export const sayHiPerson = ({

@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-
+    "noEmit": true,
     /* Modules */
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "types": ["bun-types"],
+    "types": [
+      "bun-types",
+      "react",
+      "react-dom"
+    ],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
@@ -18,7 +22,6 @@
       "@trigger/*": ["src/trigger/*"],
       "@emails/*": ["src/emails/*"]
     },
-
     /* Type Checking */
     "strict": true,
     "skipLibCheck": true,
