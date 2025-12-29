@@ -388,6 +388,110 @@ pm2 monit
 # instances: 2
 ```
 
+## Optional: Adding Observability
+
+The PM2 deployment is intentionally lightweight, but you can add observability if needed.
+
+### Option 1: Docker Compose (Recommended for VPS)
+
+Deploy the same observability stack used in Kubernetes directly on your VPS:
+
+```bash
+# On your VPS, clone the repo or copy these files:
+# - docker-compose.yml
+# - prometheus.yml
+# - tempo.yaml
+# - grafana/ folder
+
+# Generate prometheus config
+bun run generate:prometheus
+
+# Start the observability stack
+docker compose up -d
+
+# Verify services are running
+docker compose ps
+```
+
+Then update your `.env` to point to the local stack:
+
+```env
+LOKI_URL=http://localhost:3100
+TEMPO_URL=http://localhost:4318
+```
+
+Access Grafana at `http://your-vps-ip:3001`
+
+### Option 2: Grafana Cloud (Free Tier)
+
+Use managed Grafana Cloud for zero-maintenance observability:
+
+1. Sign up at [grafana.com/products/cloud](https://grafana.com/products/cloud/)
+2. Create a free account (includes Loki, Tempo, Prometheus)
+3. Get your credentials from the Grafana Cloud portal
+4. Update your `.env`:
+
+```env
+# Grafana Cloud endpoints (example)
+LOKI_URL=https://logs-prod-us-central1.grafana.net
+TEMPO_URL=https://tempo-prod-us-central1.grafana.net
+
+# Add authentication headers in your telemetry config
+# See Grafana Cloud docs for specific setup
+```
+
+### Option 3: Other Managed Services
+
+| Service | Free Tier | Best For |
+|---------|-----------|----------|
+| [Grafana Cloud](https://grafana.com/products/cloud/) | 50GB logs, 10k metrics | Full observability |
+| [Datadog](https://www.datadoghq.com/) | Limited | APM + Infrastructure |
+| [New Relic](https://newrelic.com/) | 100GB/month | Full-stack monitoring |
+| [Axiom](https://axiom.co/) | 500GB/month | Logs + traces |
+| [Betterstack](https://betterstack.com/) | 1GB/month | Logs + uptime |
+
+### Service URLs (Docker Compose)
+
+Once running, access your observability stack:
+
+| Service    | URL                   | Purpose                 |
+| ---------- | --------------------- | ----------------------- |
+| Grafana    | http://localhost:3001 | Visualization dashboard |
+| Prometheus | http://localhost:9090 | Metrics queries         |
+| Tempo      | http://localhost:3200 | Tracing backend         |
+| Loki       | http://localhost:3100 | Logs backend            |
+
+> **Note**: For production, consider adding Nginx reverse proxy with SSL for your observability endpoints, or restrict access via firewall rules.
+
+### Nginx Configuration for Grafana (Optional)
+
+Add this to your Nginx config to proxy Grafana:
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name grafana.your-domain.com;
+    
+    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+    
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+Then get an SSL certificate:
+
+```bash
+sudo certbot --nginx -d grafana.your-domain.com
+```
+
 ## Comparison: PM2 vs Pulumi/K8s
 
 | Feature | PM2 | Pulumi/K8s |
@@ -395,7 +499,7 @@ pm2 monit
 | **Complexity** | Low | High |
 | **Cost** | ~$5/month VPS | ~$20+/month (K3s VPS) |
 | **Scaling** | Vertical + cluster mode | Horizontal replicas |
-| **Observability** | Basic PM2 logs | Full stack (Prometheus, Grafana, Loki, Tempo) |
+| **Observability** | Optional (Docker Compose) | Built-in (Prometheus, Grafana, Loki, Tempo) |
 | **Zero-downtime deploys** | Yes (`pm2 reload`) | Yes (rolling updates) |
 | **SSL** | Certbot/Nginx | cert-manager (automatic) |
 | **Load balancing** | Nginx | Kubernetes Service |
