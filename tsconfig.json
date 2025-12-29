@@ -14,11 +14,14 @@
       "@app/*": ["src/app/*"],
       "@lib/*": ["src/lib/*"],
       "@routes/*": ["src/app/routes/*"],
-      "@db/*": ["src/db/*"]
+      "@db/*": ["src/db/*"],
+      "@trigger/*": ["src/trigger/*"],
+      "@emails/*": ["src/emails/*"]
     },
 
     /* Type Checking */
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "jsx": "react"
   }
 }

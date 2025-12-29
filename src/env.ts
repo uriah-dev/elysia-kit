@@ -13,6 +13,14 @@ const EnvSchema = z.object({
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
 
+  // Trigger.dev
+  TRIGGER_SECRET_KEY: z.string().optional(),
+  TRIGGER_PROJECT_ID: z.string().optional(), // Project ID or name in Trigger.dev
+
+  // Email
+  RESEND_API_KEY: z.string(),
+  RESEND_MAIL: z.email(),
+
   // Telemetry ports
   TEMPO_UI_PORT: z.coerce.number().default(3200),
   TEMPO_OTLP_GRPC_PORT: z.coerce.number().default(4317),

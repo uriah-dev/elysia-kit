@@ -11,6 +11,8 @@ import { addMetric } from "@lib/telemetry";
 import type { UserContext } from ".";
 import type { UserInsert, UserUpdate } from "@db/schema/users";
 import { logMsg } from "@src/lib/utils";
+import { OTPEmail } from "@src/emails/otp";
+import { render } from "@react-email/render";
 
 export const createUser = async ({
   body,
@@ -141,6 +143,41 @@ export const deleteUser = async ({
       errorMessage: "Failed to delete user",
       onError: (error) => {
         logger.error(logMsg("Failed to delete user", { error: error.message }));
+        return null;
+      },
+    }
+  );
+
+export const testMail = async ({
+  queue,
+  body,
+  logger,
+  metric,
+}: UserContext<{ body: Pick<UserInsert, "email"> }>) =>
+  apiTryWrapper(
+    async () => {
+      addMetric(metric, { endpoint: "/email", method: "POST" });
+      logger.info(logMsg("Queuing email notification", { email: body.email }));
+
+      const to = body.email;
+      const otp = ~~(Math.random() * (900_000 - 1)) + 100_000;
+
+      const html = await render(OTPEmail({ otp }));
+
+      const job = await queue.email.enqueue({
+        to,
+        subject: "Elysia Kit Mail Test",
+        body: `Your OTP code is: ${otp}`,
+        html,
+      });
+
+      logger.info(logMsg("Email queued", { jobId: job.id, email: to }));
+      return apiSuccess({ email: to }, "Email queued successfully");
+    },
+    {
+      errorMessage: "Failed to queue email",
+      onError: (error) => {
+        logger.error(logMsg("Failed to queue email", { error: error.message }));
         return null;
       },
     }

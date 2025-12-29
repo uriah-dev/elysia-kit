@@ -8,6 +8,7 @@ import {
   listUsers,
   updateUser,
   deleteUser,
+  testMail,
 } from "./service";
 import { UsersInsertSchema, UsersUpdateSchema } from "@db/schema/users";
 
@@ -38,4 +39,7 @@ export const user = new Elysia(config)
   .put("/:id", updateUser, {
     body: UsersUpdateSchema,
   })
-  .delete("/:id", deleteUser);
+  .delete("/:id", deleteUser)
+  .post("/email", testMail, {
+    body: UsersInsertSchema.pick({ email: true }),
+  });
