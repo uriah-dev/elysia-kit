@@ -6,17 +6,43 @@ export const hasValue = (value: unknown): value is string => {
   return value !== 0 && !!value;
 };
 
-export const getEnvValue = (key: string) => {
-  const value = getEnv()[key];
-  if (!hasValue(value)) {
-    throw new ReferenceError(`${key}: Missing Env Variable`);
+const isOptionalField = (field: z.ZodTypeAny): boolean => {
+  if (typeof (field as any).isOptional === "function") {
+    return (field as any).isOptional();
   }
-  return value;
+  const typeName = (field._def as any)?.typeName as string | undefined;
+  if (
+    typeName === "ZodOptional" ||
+    typeName === "ZodDefault" ||
+    typeName === "ZodNullable"
+  ) {
+    return true;
+  }
+  if (typeName === "ZodEffects" && (field._def as any)?.schema) {
+    return isOptionalField((field._def as any).schema);
+  }
+  const zodType = (field as any)._zod?.def?.type;
+  if (zodType === "optional" || zodType === "default" || zodType === "nullable") {
+    return true;
+  }
+
+  return false;
 };
 
-export const getOptionalEnvValue = (key: string) => {
-  const value = getEnv()[key];
-  return hasValue(value) ? value : undefined;
+export const getEnvValue = <T extends z.ZodObject<any>>(schema: T) => {
+  return (key: string): string | undefined => {
+    const value = getEnv()[key];
+    const field = schema.shape[key];
+
+    if (!field) return value;
+    if (isOptionalField(field) && !hasValue(value)) {
+      return undefined;
+    }
+    if (!hasValue(value)) {
+      throw new ReferenceError(`${key}: Missing Env Variable`);
+    }
+    return value;
+  };
 };
 
 export const buildFromSchema = <T extends z.ZodObject<any>>(

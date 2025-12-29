@@ -31,9 +31,15 @@ const EnvSchema = z.object({
   METRICS_EXPORTER_PORT: z.coerce.number().default(9464),
 
   // Telemetry service URLs
-  TEMPO_URL: z.string().url().optional(),
-  LOKI_URL: z.string().url().optional(),
+  TEMPO_URL: z.url().optional(),
+  LOKI_URL: z.url().optional(),
+
+  // Arcjet
+  ARCJET_KEY: z.string().optional(),
+  ARCJET_ENV: z.enum(["development", "production"]).default("development").optional(),
 });
 export type EnvSchemaType = z.infer<typeof EnvSchema>;
 
-export const env = EnvSchema.parse(buildFromSchema(EnvSchema, getEnvValue));
+export const env = EnvSchema.parse(
+  buildFromSchema(EnvSchema, getEnvValue(EnvSchema))
+);

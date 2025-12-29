@@ -2,7 +2,6 @@ import { env } from "@src/env";
 export {
   hasValue,
   getEnvValue,
-  getOptionalEnvValue,
   buildFromSchema,
 } from "./env-utils";
 import { hasValue } from "./env-utils";
