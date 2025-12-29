@@ -316,7 +316,7 @@ The stack includes Prometheus, Grafana, Loki, and Tempo for full observability.
 
 ### Accessing Grafana
 
-Grafana is available at `https://monitoring.steppy.dev` (configured via Ingress).
+Grafana is available at `https://monitoring.<your-domain>` (configured via Ingress based on your `grafanaDomain` or defaults to `monitoring.<domain>`).
 
 ### Viewing Logs (Loki)
 
