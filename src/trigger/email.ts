@@ -7,7 +7,6 @@ import type { TriggerableTask } from "./queue";
 export type SendEmailPayload = {
   to: string;
   subject: string;
-  body: string;
   html: string;
   userId?: string;
 };

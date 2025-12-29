@@ -11,7 +11,7 @@ import { addMetric } from "@lib/telemetry";
 import type { UserContext } from ".";
 import type { UserInsert, UserUpdate } from "@db/schema/users";
 import { logMsg } from "@src/lib/utils";
-import { OTPEmail } from "@src/emails/otp";
+import { WelcomeEmail } from "@src/emails/welcome";
 import { render } from "@react-email/render";
 
 export const createUser = async ({
@@ -160,14 +160,11 @@ export const testMail = async ({
       logger.info(logMsg("Queuing email notification", { email: body.email }));
 
       const to = body.email;
-      const otp = ~~(Math.random() * (900_000 - 1)) + 100_000;
-
-      const html = await render(OTPEmail({ otp }));
+      const html = await render(WelcomeEmail({}));
 
       const job = await queue.email.enqueue({
         to,
-        subject: "Elysia Kit Mail Test",
-        body: `Your OTP code is: ${otp}`,
+        subject: "Welcome To Elysia Kit",
         html,
       });
 
