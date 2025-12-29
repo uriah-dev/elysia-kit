@@ -1,6 +1,6 @@
 import { sendEmail } from "@src/emails";
 import { logger } from "@src/lib/logger";
-import { hasValue, logMsg, tryWrapper } from "@src/lib/utils";
+import { hasValue, tryWrapper } from "@src/lib/utils";
 import { task } from "@trigger.dev/sdk/v3";
 import type { TriggerableTask } from "./queue";
 
@@ -18,28 +18,28 @@ export const sendEmailTask = task({
     maxAttempts: 3,
   },
   run: async (payload: SendEmailPayload) => {
-    logger.info(
-      logMsg("Sending email", { to: payload.to, subject: payload.subject })
-    );
+    logger.info({ to: payload.to, subject: payload.subject }, "Sending email");
 
     const result = await tryWrapper(async () => await sendEmail(payload));
 
     if (!hasValue(result) || !result.success) {
       const errorMessage = result?.error || "Failed to send email";
       logger.error(
-        logMsg("Failed to send email", {
+        {
           to: payload.to,
           error: errorMessage,
-        })
+        },
+        "Failed to send email"
       );
       throw new Error(errorMessage);
     }
 
     logger.info(
-      logMsg("Email sent successfully", {
+      {
         to: payload.to,
         emailId: result.id,
-      })
+      },
+      "Email sent successfully"
     );
 
     return {

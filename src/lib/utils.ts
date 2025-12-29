@@ -9,8 +9,6 @@ import { hasValue } from "./env-utils";
 
 export const lower = (v: string) => v.toLowerCase();
 export const json = (v: any) => JSON.stringify(v);
-export const logMsg = (...parts: (string | object)[]) =>
-  parts.map((p) => (typeof p === "string" ? p : json(p))).join(" ");
 export const getRoutePrefix = (name: string) => lower(name);
 
 export const getMetricKey = (routeName: string, metricName?: string) =>

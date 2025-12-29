@@ -10,7 +10,6 @@ import { apiSuccess, apiError, apiTryWrapper } from "@src/lib/common";
 import { addMetric } from "@lib/telemetry";
 import type { UserContext } from ".";
 import type { UserInsert, UserUpdate } from "@db/schema/users";
-import { logMsg } from "@src/lib/utils";
 import { WelcomeEmail } from "@src/emails/welcome";
 import { render } from "@react-email/render";
 
@@ -24,13 +23,13 @@ export const createUser = async ({
     async () => {
       const user = await insertOne(db, usersTable, body);
       addMetric(metric, { endpoint: "/", method: "POST" });
-      logger.info(logMsg("User created", { userId: user.id }));
+      logger.info({ userId: user.id }, "User created");
       return apiSuccess(user, "User created successfully");
     },
     {
       errorMessage: "Failed to create user",
       onError: (error) => {
-        logger.error(logMsg("Failed to create user", { error: error.message }));
+        logger.error({ error: error.message }, "Failed to create user");
         if (error.code === "23505") {
           return apiError("VALIDATION_ERROR", "Email already exists");
         }
@@ -51,17 +50,17 @@ export const getUser = async ({
       const user = await findById(db, usersTable, params.id);
 
       if (!user) {
-        logger.warn(logMsg("User not found", { userId: params.id }));
+        logger.warn({ userId: params.id }, "User not found");
         return apiError("NOT_FOUND", "User not found");
       }
 
-      logger.info(logMsg("User retrieved", { userId: user.id }));
+      logger.info({ userId: user.id }, "User retrieved");
       return apiSuccess(user);
     },
     {
       errorMessage: "Failed to get user",
       onError: (error) => {
-        logger.error(logMsg("Failed to get user", { error: error.message }));
+        logger.error({ error: error.message }, "Failed to get user");
         return null;
       },
     }
@@ -72,13 +71,13 @@ export const listUsers = async ({ logger, metric, db }: UserContext) =>
     async () => {
       addMetric(metric, { endpoint: "/", method: "GET" });
       const users = await findAll(db, usersTable);
-      logger.info(logMsg("Users listed", { count: users.length }));
+      logger.info({ count: users.length }, "Users listed");
       return apiSuccess(users);
     },
     {
       errorMessage: "Failed to list users",
       onError: (error) => {
-        logger.error(logMsg("Failed to list users", { error: error.message }));
+        logger.error({ error: error.message }, "Failed to list users");
         return null;
       },
     }
@@ -97,18 +96,18 @@ export const updateUser = async ({
 
       const existing = await findById(db, usersTable, params.id);
       if (!existing) {
-        logger.warn(logMsg("User not found for update", { userId: params.id }));
+        logger.warn({ userId: params.id }, "User not found for update");
         return apiError("NOT_FOUND", "User not found");
       }
 
       const updated = await updateById(db, usersTable, params.id, body);
-      logger.info(logMsg("User updated", { userId: updated?.id }));
+      logger.info({ userId: updated?.id }, "User updated");
       return apiSuccess(updated, "User updated successfully");
     },
     {
       errorMessage: "Failed to update user",
       onError: (error) => {
-        logger.error(logMsg("Failed to update user", { error: error.message }));
+        logger.error({ error: error.message }, "Failed to update user");
         if (error.code === "23505") {
           return apiError("VALIDATION_ERROR", "Email already exists");
         }
@@ -129,20 +128,18 @@ export const deleteUser = async ({
 
       const existing = await findById(db, usersTable, params.id);
       if (!existing) {
-        logger.warn(
-          logMsg("User not found for deletion", { userId: params.id })
-        );
+        logger.warn({ userId: params.id }, "User not found for deletion");
         return apiError("NOT_FOUND", "User not found");
       }
 
       await deleteById(db, usersTable, params.id);
-      logger.info(logMsg("User deleted", { userId: params.id }));
+      logger.info({ userId: params.id }, "User deleted");
       return apiSuccess({ id: params.id }, "User deleted successfully");
     },
     {
       errorMessage: "Failed to delete user",
       onError: (error) => {
-        logger.error(logMsg("Failed to delete user", { error: error.message }));
+        logger.error({ error: error.message }, "Failed to delete user");
         return null;
       },
     }
@@ -157,7 +154,7 @@ export const testMail = async ({
   apiTryWrapper(
     async () => {
       addMetric(metric, { endpoint: "/email", method: "POST" });
-      logger.info(logMsg("Queuing email notification", { email: body.email }));
+      logger.info({ email: body.email }, "Queuing email notification");
 
       const to = body.email;
       const html = await render(WelcomeEmail({}));
@@ -168,13 +165,13 @@ export const testMail = async ({
         html,
       });
 
-      logger.info(logMsg("Email queued", { jobId: job.id, email: to }));
+      logger.info({ jobId: job.id, email: to }, "Email queued");
       return apiSuccess({ email: to }, "Email queued successfully");
     },
     {
       errorMessage: "Failed to queue email",
       onError: (error) => {
-        logger.error(logMsg("Failed to queue email", { error: error.message }));
+        logger.error({ error: error.message }, "Failed to queue email");
         return null;
       },
     }
