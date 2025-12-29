@@ -33,6 +33,29 @@ infra/
 
 ## Getting Started
 
+### Quick Start (TL;DR)
+
+New to this project? Here's the fastest path to deployment:
+
+```bash
+# 1. Install dependencies
+bun install
+
+# 2. Copy and edit config template
+cp Pulumi.dev.yaml.example Pulumi.dev.yaml
+# Edit Pulumi.dev.yaml with your domain, registry, and email
+
+# 3. Validate configuration
+bun run infra:check
+
+# 4. Deploy to dev
+bun run infra:dev
+```
+
+That's it! Read below for detailed setup instructions.
+
+---
+
 ### 1. Install Pulumi CLI
 
 ```bash
@@ -55,7 +78,42 @@ pulumi stack init dev
 pulumi stack init production
 ```
 
-### 4. Configure Secrets
+### 4. Configure Required Settings
+
+**IMPORTANT**: Three settings are required before deployment:
+
+```bash
+# Select your stack
+pulumi stack select dev
+
+# REQUIRED: Your Docker registry (where your images are stored)
+pulumi config set imageRegistry docker.io/YOUR_DOCKERHUB_USERNAME
+
+# REQUIRED: Your domain name
+pulumi config set domain dev.yourdomain.com
+
+# REQUIRED: Email for Let's Encrypt SSL certificates
+pulumi config set letsencryptEmail you@yourdomain.com
+```
+
+**TIP**: You can use the config templates as a starting point:
+
+```bash
+cp Pulumi.dev.yaml.example Pulumi.dev.yaml
+# Edit Pulumi.dev.yaml with your values
+```
+
+### 5. Validate Configuration
+
+Run the preflight check to ensure all required configuration is set:
+
+```bash
+bun run infra:check
+```
+
+This will validate your configuration and provide helpful error messages if anything is missing.
+
+### 6. Configure Secrets
 
 You can configure secrets manually or use the sync script.
 
@@ -104,7 +162,7 @@ pulumi config set triggerProjectId "your-project-id"
 pulumi config set imageRegistry "docker.io/your-username"
 ```
 
-### 5. Deploy
+### 7. Deploy
 
 ```bash
 # Preview changes

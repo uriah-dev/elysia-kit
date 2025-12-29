@@ -22,6 +22,7 @@ export interface InfraConfig {
     appPort: number;
     logLevel: string;
     domain: string;
+    grafanaDomain?: string;
 
     // Database
     dbName: string;
@@ -63,10 +64,11 @@ export function loadConfig(): InfraConfig {
         namespace: `elysia-kit-${environment}`,
         replicas: config.getNumber("replicas") || (isProduction ? 3 : 1),
         imageTag: config.get("imageTag") || "latest",
-        imageRegistry: config.get("imageRegistry") || "docker.io/your-username",
+        imageRegistry: config.require("imageRegistry"), // Required!
         appPort: config.getNumber("appPort") || 3000,
         logLevel: config.get("logLevel") || (isProduction ? "info" : "debug"),
-        domain: config.get("domain") || `${environment}.elysia-kit.local`,
+        domain: config.require("domain"), // Required!
+        grafanaDomain: config.get("grafanaDomain"), // Optional, will default to monitoring.<domain>
 
         // Database
         dbName: config.get("dbName") || `elysia_kit_${environment}`,
@@ -89,7 +91,7 @@ export function loadConfig(): InfraConfig {
         tempoPort: 3200,
 
         // SSL/TLS
-        letsencryptEmail: config.get("letsencryptEmail") || "admin@example.com",
+        letsencryptEmail: config.require("letsencryptEmail"), // Required!
     };
 }
 

@@ -36,7 +36,8 @@
     "pm2:logs": "pm2 logs elysia-kit",
     "pm2:monit": "pm2 monit",
     "deploy:pm2": "pm2 deploy ecosystem.config.cjs production",
-    "deploy:pm2:setup": "pm2 deploy ecosystem.config.cjs production setup"
+    "deploy:pm2:setup": "pm2 deploy ecosystem.config.cjs production setup",
+    "infra:check": "cd infra && bun run preflight-check.ts"
   },
   "dependencies": {
     "@elysiajs/openapi": "^1.4.13",

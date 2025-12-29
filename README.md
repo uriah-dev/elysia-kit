@@ -43,6 +43,12 @@ Deploy to Kubernetes with Prometheus, Grafana, Loki, and Tempo:
 # Install dependencies
 bun run infra:install
 
+# Configure (see infra/README.md for details)
+# Required: imageRegistry, domain, letsencryptEmail
+
+# Validate configuration
+bun run infra:check
+
 # Deploy to dev
 bun run infra:dev
 

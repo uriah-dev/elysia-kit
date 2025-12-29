@@ -14,6 +14,10 @@ export function createGrafana(args: GrafanaArgs) {
     const { cfg, namespace } = args;
     const labels = { ...getCommonLabels(cfg), component: "grafana" };
 
+    // Determine Grafana public URL (use configured domain or default to monitoring.<app-domain>)
+    const grafanaDomain = cfg.grafanaDomain || `monitoring.${cfg.domain}`;
+    const grafanaRootUrl = `https://${grafanaDomain}`;
+
     // Grafana datasource provisioning
     const datasourcesConfigMap = new k8s.core.v1.ConfigMap(`${cfg.appName}-grafana-datasources`, {
         metadata: {
@@ -89,7 +93,7 @@ datasources:
                             env: [
                                 { name: "GF_AUTH_ANONYMOUS_ENABLED", value: "true" },
                                 { name: "GF_AUTH_ANONYMOUS_ORG_ROLE", value: "Admin" },
-                                { name: "GF_SERVER_ROOT_URL", value: "https://monitoring.steppy.dev" },
+                                { name: "GF_SERVER_ROOT_URL", value: grafanaRootUrl },
                             ],
                             volumeMounts: [
                                 {

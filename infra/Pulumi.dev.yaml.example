@@ -1,0 +1,49 @@
+# Development Stack Configuration Template
+# Copy this file to Pulumi.dev.yaml and fill in your values
+
+config:
+  # REQUIRED: Your Docker registry (e.g., docker.io/your-username or ghcr.io/your-username)
+  elysia-kit-infra:imageRegistry: docker.io/YOUR_DOCKERHUB_USERNAME
+  
+  # REQUIRED: Your domain name (e.g., dev.yourdomain.com or api-dev.yourdomain.com)
+  elysia-kit-infra:domain: dev.yourdomain.com
+  
+  # REQUIRED: Email for Let's Encrypt SSL certificates
+  elysia-kit-infra:letsencryptEmail: you@yourdomain.com
+  
+  # OPTIONAL: Docker image tag (defaults to 'latest')
+  elysia-kit-infra:imageTag: latest
+  
+  # OPTIONAL: Number of app replicas (defaults to 1 for dev)
+  elysia-kit-infra:replicas: "1"
+  
+  # OPTIONAL: Log level (defaults to 'debug' for dev)
+  elysia-kit-infra:logLevel: debug
+  
+  # OPTIONAL: Grafana subdomain (defaults to monitoring.<domain>)
+  # elysia-kit-infra:grafanaDomain: grafana.yourdomain.com
+  
+  # OPTIONAL: Database configuration (has sensible defaults)
+  # elysia-kit-infra:dbName: elysia_kit_dev
+  # elysia-kit-infra:dbUser: postgres
+  # elysia-kit-infra:dbStorageSize: 5Gi
+  
+  # SECRETS: Set these using `pulumi config set --secret <key> <value>`
+  # These will be encrypted and stored safely
+  
+  # Database password (recommended, even for dev)
+  # Run: pulumi config set --secret dbPassword YOUR_SECURE_PASSWORD
+  
+  # Resend API key (required for email functionality)
+  # Run: pulumi config set --secret resendApiKey re_XXXXX
+  
+  # Resend email sender (required for email functionality)
+  # Run: pulumi config set resendMail noreply@yourdomain.com
+  
+  # Trigger.dev credentials (optional, for background jobs)
+  # Run: pulumi config set --secret triggerSecretKey tr_XXXXX
+  # Run: pulumi config set triggerProjectId proj_XXXXX
+
+# After filling in values:
+# 1. Run: bun run infra:check    (validate configuration)
+# 2. Run: bun run infra:dev      (deploy to dev)

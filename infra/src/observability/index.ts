@@ -33,11 +33,14 @@ export function createObservabilityStack(args: ObservabilityArgs) {
     const grafana = createGrafana({ cfg, namespace });
 
     // Create Grafana Ingress for public access
+    // Use configured grafanaDomain or default to monitoring.<app-domain>
+    const grafanaDomain = cfg.grafanaDomain || `monitoring.${cfg.domain}`;
+
     const grafanaIngress = createGrafanaIngress({
         cfg,
         namespace,
         serviceName: grafana.service.metadata.name,
-        domain: "monitoring.steppy.dev",
+        domain: grafanaDomain,
     });
 
     return {

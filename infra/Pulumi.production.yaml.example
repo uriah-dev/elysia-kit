@@ -1,0 +1,59 @@
+# Production Stack Configuration Template
+# Copy this file to Pulumi.production.yaml and fill in your values
+
+config:
+  # REQUIRED: Your Docker registry (e.g., docker.io/your-username or ghcr.io/your-username)
+  elysia-kit-infra:imageRegistry: docker.io/YOUR_DOCKERHUB_USERNAME
+  
+  # REQUIRED: Your production domain name (e.g., yourdomain.com or api.yourdomain.com)
+  elysia-kit-infra:domain: yourdomain.com
+  
+  # REQUIRED: Email for Let's Encrypt SSL certificates
+  elysia-kit-infra:letsencryptEmail: you@yourdomain.com
+  
+  # OPTIONAL: Docker image tag (use specific versions in production!)
+  elysia-kit-infra:imageTag: v1.0.0
+  
+  # OPTIONAL: Number of app replicas (defaults to 3 for production)
+  elysia-kit-infra:replicas: "3"
+  
+  # OPTIONAL: Log level (defaults to 'info' for production)
+  elysia-kit-infra:logLevel: info
+  
+  # OPTIONAL: Grafana subdomain (defaults to monitoring.<domain>)
+  # elysia-kit-infra:grafanaDomain: grafana.yourdomain.com
+  
+  # OPTIONAL: Database configuration (has sensible production defaults)
+  # elysia-kit-infra:dbName: elysia_kit_production
+  # elysia-kit-infra:dbUser: postgres
+  # elysia-kit-infra:dbStorageSize: 20Gi
+  
+  # OPTIONAL: Resource limits (uncomment to customize)
+  # elysia-kit-infra:cpuRequest: 250m
+  # elysia-kit-infra:cpuLimit: "1"
+  # elysia-kit-infra:memoryRequest: 512Mi
+  # elysia-kit-infra:memoryLimit: 1Gi
+  
+  # SECRETS: Set these using `pulumi config set --secret <key> <value>`
+  # CRITICAL FOR PRODUCTION - Use strong, unique passwords!
+  
+  # Database password (REQUIRED)
+  # Run: pulumi config set --secret dbPassword $(openssl rand -base64 32)
+  
+  # Resend API key (REQUIRED)
+  # Run: pulumi config set --secret resendApiKey re_XXXXX
+  
+  # Resend email sender (REQUIRED)
+  # Run: pulumi config set resendMail noreply@yourdomain.com
+  
+  # Trigger.dev credentials (required if using background jobs)
+  # Run: pulumi config set --secret triggerSecretKey tr_XXXXX
+  # Run: pulumi config set triggerProjectId proj_XXXXX
+
+# Production Deployment Checklist:
+# [ ] All secrets set with strong values
+# [ ] Domain DNS pointing to cluster
+# [ ] Database backups configured
+# [ ] Monitoring alerts set up
+# [ ] Run: bun run infra:check    (validate configuration)
+# [ ] Run: bun run infra:prod     (deploy to production)
