@@ -35,3 +35,13 @@ export const buildServiceUrl = (port: number, path = "") => {
 };
 
 export const isDevEnv = () => env.NODE_ENV === "development";
+
+export const tryWrapper = async <T>(
+  fn: () => Promise<T>
+): Promise<T | null> => {
+  try {
+    return await fn();
+  } catch {
+    return null;
+  }
+};

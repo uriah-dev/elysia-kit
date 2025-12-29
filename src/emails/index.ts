@@ -1,6 +1,7 @@
 import { env } from "@src/env";
 import { Resend } from "resend";
 import { logger } from "@src/lib/logger";
+import { hasValue, tryWrapper } from "@src/lib/utils";
 
 export type SendEmailParams = {
   to: string | string[];
@@ -56,15 +57,15 @@ const buildEmailOptions = (params: SendEmailParams) => {
 export const sendEmail = async (
   params: SendEmailParams
 ): Promise<SendEmailResult> => {
-  try {
+  const res = await tryWrapper(async () => {
     const emailOptions = buildEmailOptions(params);
     const { data, error } = await resend.emails.send(emailOptions);
 
-    if (error) {
+    if (!hasValue(data) && hasValue(error)) {
       logger.error({ error, to: params.to }, "Failed to send email");
       return {
         success: false,
-        error: error.message || "Unknown error",
+        error: error?.message || "Unknown error",
       };
     }
 
@@ -77,14 +78,13 @@ export const sendEmail = async (
       success: true,
       id: data?.id,
     };
-  } catch (error: any) {
-    logger.error(
-      { error: error.message, to: params.to },
-      "Email send exception"
-    );
-    return {
-      success: false,
-      error: error.message || "Unknown error",
-    };
+  });
+  if (res?.success) {
+    return res;
   }
+  logger.error({ to: params.to }, "An error occurred sending mail");
+  return {
+    success: false,
+    error: res?.error || "Unknown error",
+  };
 };
