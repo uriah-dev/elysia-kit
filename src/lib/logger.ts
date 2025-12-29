@@ -9,7 +9,7 @@ const getTransport = () => {
       options: {
         batching: true,
         interval: 5,
-        host: buildServiceUrl(env.LOKI_PORT),
+        host: env.LOKI_URL || buildServiceUrl(env.LOKI_PORT),
         labels: {
           app: env.APP_NAME,
           env: env.NODE_ENV,

@@ -29,6 +29,10 @@ const EnvSchema = z.object({
   LOKI_PORT: z.coerce.number().default(3100),
   GRAFANA_PORT: z.coerce.number().default(3001),
   METRICS_EXPORTER_PORT: z.coerce.number().default(9464),
+
+  // Telemetry service URLs
+  TEMPO_URL: z.string().url().optional(),
+  LOKI_URL: z.string().url().optional(),
 });
 export type EnvSchemaType = z.infer<typeof EnvSchema>;
 

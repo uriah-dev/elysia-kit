@@ -1,0 +1,6 @@
+name: elysia-kit-infra
+runtime:
+  name: nodejs
+  options:
+    packagemanager: bun
+description: Kubernetes infrastructure for elysia-kit application

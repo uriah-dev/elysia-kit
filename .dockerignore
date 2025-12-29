@@ -1,0 +1,48 @@
+# Dependencies
+node_modules
+bun.lock
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Test files
+tests
+*.test.ts
+*.spec.ts
+
+# Infrastructure
+infra
+
+# Telemetry configs (local dev only)
+prometheus.yml
+tempo.yaml
+grafana
+
+# Documentation
+README.md
+*.md
+
+# Logs
+*.log
+logs
+
+# Misc
+.DS_Store
+Thumbs.db

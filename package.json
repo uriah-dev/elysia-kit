@@ -1,6 +1,6 @@
 {
   "name": "elysia-kit",
-  "version": "0.0.1",
+  "version": "1.0.3",
   "scripts": {
     "dev": "bun --bun run --watch src/index.ts",
     "test": "bun test",
@@ -19,7 +19,16 @@
     "telemetry:down": "docker compose down",
     "trigger:dev": "bunx --bun trigger.dev@latest dev",
     "trigger:deploy": "bunx --bun trigger.dev@latest deploy",
-    "email": "email dev --dir src/emails"
+    "email": "email dev --dir src/emails",
+    "infra:install": "cd infra && bun install",
+    "infra:preview": "cd infra && pulumi preview",
+    "infra:dev": "cd infra && pulumi up --stack dev",
+    "infra:prod": "cd infra && pulumi up --stack production",
+    "infra:destroy:dev": "cd infra && pulumi destroy --stack dev",
+    "infra:destroy:prod": "cd infra && pulumi destroy --stack production",
+    "docker:build": "docker build -t elysia-kit:latest .",
+    "docker:push": "docker push elysia-kit:latest",
+    "deploy": "docker build -t alsinajun/elysia-kit:latest . && docker push alsinajun/elysia-kit:latest && kubectl rollout restart deployment/elysia-kit -n elysia-kit-dev"
   },
   "dependencies": {
     "@elysiajs/openapi": "^1.4.13",

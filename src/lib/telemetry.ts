@@ -10,7 +10,9 @@ import { hasValue, buildServiceUrl } from "./utils";
 import { logger } from "./logger";
 
 const traceExporter = new OTLPTraceExporter({
-  url: buildServiceUrl(env.TEMPO_OTLP_HTTP_PORT, "/v1/traces"),
+  url: env.TEMPO_URL
+    ? `${env.TEMPO_URL}/v1/traces`
+    : buildServiceUrl(env.TEMPO_OTLP_HTTP_PORT, "/v1/traces"),
 });
 
 const metricsExporter = new PrometheusExporter(

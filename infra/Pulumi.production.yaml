@@ -1,0 +1,18 @@
+config:
+  elysia-kit:environment: production
+  elysia-kit:replicas: 3
+  elysia-kit:imageTag: v1.0.0
+  elysia-kit:appPort: "3000"
+  elysia-kit:logLevel: info
+  elysia-kit:domain: elysia-kit.yourdomain.com
+  # Database
+  elysia-kit:dbName: elysia_kit_prod
+  elysia-kit:dbUser: postgres
+  elysia-kit:dbStorageSize: 20Gi
+  # Resources (strict for production)
+  elysia-kit:cpuRequest: 250m
+  elysia-kit:cpuLimit: "1"
+  elysia-kit:memoryRequest: 512Mi
+  elysia-kit:memoryLimit: 1Gi
+  # Observability
+  elysia-kit:enableObservability: true
