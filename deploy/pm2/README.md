@@ -422,6 +422,31 @@ TEMPO_URL=http://localhost:4318
 
 Access Grafana at `http://your-vps-ip:3001`
 
+#### Customizing Ports
+
+If any default ports conflict with your existing services, customize them in your `.env`:
+
+```env
+# Observability Port Configuration (adjust as needed)
+TEMPO_UI_PORT=3200          # Tempo UI
+TEMPO_OTLP_GRPC_PORT=4317   # Tempo OTLP gRPC
+TEMPO_OTLP_HTTP_PORT=4318   # Tempo OTLP HTTP
+PROMETHEUS_PORT=9090        # Prometheus
+LOKI_PORT=3100              # Loki
+GRAFANA_PORT=3001           # Grafana
+METRICS_EXPORTER_PORT=9464  # App metrics endpoint
+```
+
+Then update the URL variables to match:
+
+```env
+# Update URLs if you changed ports
+LOKI_URL=http://localhost:${LOKI_PORT}        # or just use the port number
+TEMPO_URL=http://localhost:${TEMPO_OTLP_HTTP_PORT}
+```
+
+The Docker Compose file automatically uses these environment variables.
+
 ### Option 2: Grafana Cloud (Free Tier)
 
 Use managed Grafana Cloud for zero-maintenance observability:
