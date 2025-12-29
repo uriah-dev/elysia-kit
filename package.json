@@ -28,7 +28,15 @@
     "infra:destroy:prod": "cd infra && pulumi destroy --stack production",
     "docker:build": "docker build -t elysia-kit:latest .",
     "docker:push": "docker push elysia-kit:latest",
-    "deploy": "docker build -t alsinajun/elysia-kit:latest . && docker push alsinajun/elysia-kit:latest && kubectl rollout restart deployment/elysia-kit -n elysia-kit-dev"
+    "deploy:k8s": "docker build -t alsinajun/elysia-kit:latest . && docker push alsinajun/elysia-kit:latest && kubectl rollout restart deployment/elysia-kit -n elysia-kit-dev",
+    "pm2:start": "pm2 start ecosystem.config.cjs",
+    "pm2:start:prod": "pm2 start ecosystem.config.cjs --env production",
+    "pm2:reload": "pm2 reload elysia-kit",
+    "pm2:stop": "pm2 stop elysia-kit",
+    "pm2:logs": "pm2 logs elysia-kit",
+    "pm2:monit": "pm2 monit",
+    "deploy:pm2": "pm2 deploy ecosystem.config.cjs production",
+    "deploy:pm2:setup": "pm2 deploy ecosystem.config.cjs production setup"
   },
   "dependencies": {
     "@elysiajs/openapi": "^1.4.13",

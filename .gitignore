@@ -41,6 +41,10 @@ yarn-error.log*
 package-lock.json
 **/*.bun
 .env*
+!.env*.example
 .trigger
 infra/dist
 infra/node_modules
+
+# PM2
+logs/

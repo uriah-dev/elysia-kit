@@ -8,6 +8,50 @@ To start the development server run:
 bun run dev
 ```
 
+## Deployment
+
+This project supports **two deployment methods** — choose based on your needs:
+
+| Method | Best For | Complexity | Cost |
+|--------|----------|------------|------|
+| **PM2** | Simple VPS, solo devs, budget hosting | Low | ~$5/mo |
+| **Pulumi/K8s** | Production apps, teams, full observability | High | ~$20+/mo |
+
+### Option 1: PM2 (Simple VPS)
+
+Deploy to any VPS with Nginx + PM2:
+
+```bash
+# First time: setup your VPS
+# SSH into your VPS and run: sudo ./deploy/pm2/setup.sh
+
+# From local machine — initial setup
+export DEPLOY_HOST=your-vps-ip
+bun run deploy:pm2:setup
+
+# Deploy
+bun run deploy:pm2
+```
+
+📖 **[Full PM2 Deployment Guide](deploy/pm2/README.md)**
+
+### Option 2: Pulumi/K8s (Full Stack)
+
+Deploy to Kubernetes with Prometheus, Grafana, Loki, and Tempo:
+
+```bash
+# Install dependencies
+bun run infra:install
+
+# Deploy to dev
+bun run infra:dev
+
+# Deploy to production
+bun run infra:prod
+```
+
+📖 **[Full Pulumi Infrastructure Guide](infra/README.md)**
+
 ## Telemetry & Observability
 
 This project includes a full observability stack with Tempo (tracing), Prometheus (metrics), Loki (logs), and Grafana (visualization).

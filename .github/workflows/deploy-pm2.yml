@@ -1,0 +1,48 @@
+name: Deploy to PM2 Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      
+      - name: Add VPS to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Install PM2
+        run: npm install -g pm2
+      
+      - name: Deploy with PM2
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_REPO: ${{ github.repositoryUrl }}
+        run: |
+          pm2 deploy ecosystem.config.cjs production
+      
+      - name: Verify Deployment
+        run: |
+          sleep 5
+          curl -f https://${{ secrets.APP_DOMAIN }}/health || curl -f https://${{ secrets.APP_DOMAIN }}
+      
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "Deployment failed. Check the logs above for details."
+          # Add your notification logic here (Slack, Discord, email, etc.)
