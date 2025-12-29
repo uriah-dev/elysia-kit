@@ -40,6 +40,8 @@
     "infra:check": "cd infra && bun run preflight-check.ts"
   },
   "dependencies": {
+    "@arcjet/bun": "^1.0.0-beta.15",
+    "@arcjet/inspect": "^1.0.0-beta.15",
     "@elysiajs/openapi": "^1.4.13",
     "@elysiajs/opentelemetry": "^1.4.10",
     "@opentelemetry/exporter-metrics-otlp-proto": "^0.208.0",
