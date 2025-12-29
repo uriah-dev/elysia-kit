@@ -1,19 +1,58 @@
 name: Deploy to PM2 Production
 
+# ============================================================================
+# MANUAL TRIGGER ONLY
+# ============================================================================
+# This workflow does NOT run automatically on push. Users must:
+# 1. Configure secrets: DEPLOY_SSH_KEY, DEPLOY_HOST, DEPLOY_USER, APP_DOMAIN
+# 2. Manually trigger via GitHub Actions UI or CLI
+#
+# To enable automatic deployment on push, uncomment the 'push' trigger below.
+# ============================================================================
+
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:  # Allow manual triggering
+  # Uncomment to enable automatic deployment on push to main:
+  # push:
+  #   branches:
+  #     - main
+  
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+      skip_health_check:
+        description: 'Skip health check after deployment'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   deploy:
-    name: Deploy to VPS
+    name: Deploy to VPS (${{ github.event.inputs.environment || 'production' }})
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      
+      - name: Validate secrets
+        run: |
+          if [ -z "${{ secrets.DEPLOY_SSH_KEY }}" ]; then
+            echo "❌ Error: DEPLOY_SSH_KEY secret is not set"
+            echo "Please add your SSH private key to repository secrets"
+            exit 1
+          fi
+          if [ -z "${{ secrets.DEPLOY_HOST }}" ]; then
+            echo "❌ Error: DEPLOY_HOST secret is not set"
+            echo "Please add your VPS IP/hostname to repository secrets"
+            exit 1
+          fi
       
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
@@ -34,9 +73,10 @@ jobs:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_REPO: ${{ github.repositoryUrl }}
         run: |
-          pm2 deploy ecosystem.config.cjs production
+          pm2 deploy ecosystem.config.cjs ${{ github.event.inputs.environment || 'production' }}
       
       - name: Verify Deployment
+        if: ${{ github.event.inputs.skip_health_check != 'true' }}
         run: |
           sleep 5
           curl -f https://${{ secrets.APP_DOMAIN }}/health || curl -f https://${{ secrets.APP_DOMAIN }}
@@ -44,5 +84,10 @@ jobs:
       - name: Notify on Failure
         if: failure()
         run: |
-          echo "Deployment failed. Check the logs above for details."
+          echo "❌ Deployment failed. Check the logs above for details."
+          echo ""
+          echo "Common issues:"
+          echo "  - Missing secrets: DEPLOY_SSH_KEY, DEPLOY_HOST, DEPLOY_USER, APP_DOMAIN"
+          echo "  - VPS not accessible or SSH key not authorized"
+          echo "  - PM2 ecosystem config not found"
           # Add your notification logic here (Slack, Discord, email, etc.)
