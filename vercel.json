@@ -5,16 +5,16 @@
     "buildCommand": "bun build ./api/entry.ts --outfile ./api/index.js --target bun --format esm --minify",
     "devCommand": "bun run dev",
     "outputDirectory": ".",
-    "functions": {
-        "api/index.js": {
-            "memory": 128,
-            "maxDuration": 10
-        }
-    },
     "rewrites": [
         {
             "source": "/(.*)",
             "destination": "/api"
         }
-    ]
+    ],
+    "functions": {
+        "api/index.js": {
+            "memory": 128,
+            "maxDuration": 10
+        }
+    }
 }
