@@ -2,7 +2,7 @@
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "bunVersion": "1.x",
     "installCommand": "bun install",
-    "buildCommand": "bun build ./api/index.ts --outfile ./api/index.js --target bun --format esm --minify --tsconfig-override ./tsconfig.json",
+    "buildCommand": "bun build ./api/entry.ts --outfile ./api/index.js --target bun --format esm --minify && rm ./api/entry.ts",
     "outputDirectory": ".",
     "rewrites": [
         {
