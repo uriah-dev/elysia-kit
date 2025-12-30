@@ -99,6 +99,29 @@ docker compose restart tempo
 
 **Note:** `prometheus.yml` is auto-generated from the `METRICS_EXPORTER_PORT` environment variable. If you change this port, regenerate the config with `bun run generate:prometheus`.
 
+### Optional Observability
+
+Each observability feature can be independently enabled/disabled via environment variables:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `TRACING_ENABLED` | `true` | Enable/disable distributed tracing (Tempo) |
+| `METRICS_ENABLED` | `true` | Enable/disable Prometheus metrics collection |
+| `LOGGING_ENABLED` | `true` | Enable/disable remote logging to Loki |
+
+```bash
+# Example: Disable all observability for lightweight local development
+TRACING_ENABLED=false METRICS_ENABLED=false LOGGING_ENABLED=false bun run dev
+
+# Example: Enable only logging for debugging
+TRACING_ENABLED=false METRICS_ENABLED=false LOGGING_ENABLED=true bun run dev
+```
+
+When disabled:
+- **Tracing**: The telemetry plugin becomes a no-op
+- **Metrics**: Helper functions (`createCounter`, `createHistogram`, `createGauge`) return no-op implementations
+- **Logging**: Falls back to local `pino-pretty` console output instead of sending to Loki
+
 ### Service URLs
 
 | Service    | URL                   | Purpose                 |

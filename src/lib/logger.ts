@@ -3,8 +3,9 @@ import { env } from "@src/env";
 import { buildServiceUrl, isDevEnv } from "./utils";
 
 const getTransport = () => {
-  const targets: pino.TransportTargetOptions[] = [
-    {
+  const targets: pino.TransportTargetOptions[] = [];
+  if (env.LOGGING_ENABLED) {
+    targets.push({
       target: "pino-loki",
       options: {
         batching: true,
@@ -17,10 +18,9 @@ const getTransport = () => {
         silenceErrors: false,
       },
       level: env.LOG_LEVEL,
-    },
-  ];
-
-  if (isDevEnv()) {
+    });
+  }
+  if (isDevEnv() || !env.LOGGING_ENABLED) {
     targets.push({
       target: "pino-pretty",
       options: {
@@ -30,6 +30,9 @@ const getTransport = () => {
       },
       level: env.LOG_LEVEL,
     });
+  }
+  if (targets.length === 0) {
+    return undefined;
   }
 
   return pino.transport({ targets });

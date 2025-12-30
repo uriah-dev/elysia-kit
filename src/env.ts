@@ -21,6 +21,11 @@ const EnvSchema = z.object({
   RESEND_API_KEY: z.string(),
   RESEND_MAIL: z.email(),
 
+  // Observability feature flags
+  TRACING_ENABLED: z.enum(["TRUE", "FALSE"]).default("TRUE").transform((v) => v === "TRUE"),
+  METRICS_ENABLED: z.enum(["TRUE", "FALSE"]).default("TRUE").transform((v) => v === "TRUE"),
+  LOGGING_ENABLED: z.enum(["TRUE", "FALSE"]).default("TRUE").transform((v) => v === "TRUE"),
+
   // Telemetry ports
   TEMPO_UI_PORT: z.coerce.number().default(3200),
   TEMPO_OTLP_GRPC_PORT: z.coerce.number().default(4317),
