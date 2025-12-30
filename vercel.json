@@ -3,6 +3,7 @@
     "bunVersion": "1.x",
     "installCommand": "bun install",
     "buildCommand": "bun build ./api/entry.ts --outfile ./api/index.js --target bun --format esm --minify",
+    "devCommand": "bun run dev",
     "outputDirectory": ".",
     "rewrites": [
         {
