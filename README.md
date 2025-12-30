@@ -10,12 +10,16 @@ bun run dev
 
 ## Deployment
 
-This project supports **two deployment methods** — choose based on your needs:
+This project supports **three deployment methods** — choose based on your needs:
 
 | Method | Best For | Complexity | Cost |
 |--------|----------|------------|------|
+| **Vercel** | APIs, startups, serverless | Minimal | Free - $20/mo |
 | **PM2** | Simple VPS, solo devs, budget hosting | Low | ~$5/mo |
 | **Pulumi/K8s** | Production apps, teams, full observability | High | ~$20+/mo |
+
+📖 **[Deployment Comparison Guide](deploy/DEPLOYMENT_COMPARISON.md)** | 🧹 **[Remove Unwanted Deployment Options](deploy/CLEANUP.md)**
+
 
 ### Option 1: PM2 (Simple VPS)
 
