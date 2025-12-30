@@ -1,17 +1,20 @@
-// Vercel serverless function entrypoint
-// Using relative imports for Vercel compatibility
+// Vercel-specific app configuration
+// Uses relative imports instead of path aliases for Vercel compatibility
 import { Elysia } from "elysia";
 import { openapi } from "@elysiajs/openapi";
 import { html } from "@elysiajs/html";
+import { env } from "../src/env";
+import { telemetry } from "../src/lib/telemetry";
+import { home } from "../src/app/routes/home";
+import { user } from "../src/app/routes/user";
+import { health } from "../src/app/routes/health";
 
-// Re-export a minimal Elysia app for Vercel
-// The full app uses path aliases which don't resolve on Vercel's Bun runtime
-
-// Create a minimal app that works on Vercel
-const app = new Elysia({ name: "elysia-kit-vercel" })
+const app = new Elysia({ name: env.APP_NAME })
     .use(html())
+    .use(telemetry)
     .use(openapi())
-    .get("/", () => "Elysia Kit is running on Vercel!")
-    .get("/health", () => ({ status: "ok", timestamp: new Date().toISOString() }));
+    .use(health)
+    .use(home)
+    .use(user);
 
 export default app;
