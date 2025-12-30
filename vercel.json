@@ -6,7 +6,7 @@
     "devCommand": "bun run dev",
     "outputDirectory": ".",
     "functions": {
-        "test.js": {
+        "api(.*)": {
             "runtime": "nodejs24.x"
         }
     },
