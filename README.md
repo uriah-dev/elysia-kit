@@ -8,6 +8,13 @@ To start the development server run:
 bun run dev
 ```
 
+## Database
+
+This project uses **Drizzle ORM** with PostgreSQL by default. Want to use a different database?
+
+📖 **[Database Configuration Guide](src/db/DATABASE.md)** — Switch to MySQL, SQLite, Turso, Neon, and more
+
+
 ## Deployment
 
 This project supports **three deployment methods** — choose based on your needs:
