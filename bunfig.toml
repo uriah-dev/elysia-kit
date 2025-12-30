@@ -1,3 +1,10 @@
 [test]
 preload = ["./tests/setup.ts"]
 
+# Enable TypeScript path alias resolution from tsconfig.json
+[install]
+auto-install = true
+
+[run]
+# This tells Bun to resolve path aliases from tsconfig.json
+bun = true
