@@ -49,3 +49,6 @@ infra/node_modules
 # PM2
 logs/
 dist/
+
+# Vercel build output
+api/index.js

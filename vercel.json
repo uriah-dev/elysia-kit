@@ -2,7 +2,7 @@
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "bunVersion": "1.x",
     "installCommand": "bun install",
-    "outputDirectory": ".",
+    "buildCommand": "bun build ./api/entry.ts --outfile ./api/index.js --target bun",
     "framework": null,
     "rewrites": [
         {
