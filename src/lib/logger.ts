@@ -4,7 +4,7 @@ import { buildServiceUrl, isDevEnv } from "./utils";
 
 const getTransport = () => {
   const targets: pino.TransportTargetOptions[] = [];
-  if (env.LOGGING_ENABLED) {
+  if (env.LOGGING_ENABLED && env.LOKI_PORT) {
     targets.push({
       target: "pino-loki",
       options: {

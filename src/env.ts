@@ -27,13 +27,13 @@ const EnvSchema = z.object({
   LOGGING_ENABLED: z.enum(["TRUE", "FALSE"]).default("TRUE").transform((v) => v === "TRUE"),
 
   // Telemetry ports
-  TEMPO_UI_PORT: z.coerce.number().default(3200),
-  TEMPO_OTLP_GRPC_PORT: z.coerce.number().default(4317),
-  TEMPO_OTLP_HTTP_PORT: z.coerce.number().default(4318),
-  PROMETHEUS_PORT: z.coerce.number().default(9090),
-  LOKI_PORT: z.coerce.number().default(3100),
-  GRAFANA_PORT: z.coerce.number().default(3001),
-  METRICS_EXPORTER_PORT: z.coerce.number().default(9464),
+  TEMPO_UI_PORT: z.coerce.number().default(3200).optional(),
+  TEMPO_OTLP_GRPC_PORT: z.coerce.number().default(4317).optional(),
+  TEMPO_OTLP_HTTP_PORT: z.coerce.number().default(4318).optional(),
+  PROMETHEUS_PORT: z.coerce.number().default(9090).optional(),
+  LOKI_PORT: z.coerce.number().default(3100).optional(),
+  GRAFANA_PORT: z.coerce.number().default(3001).optional(),
+  METRICS_EXPORTER_PORT: z.coerce.number().default(9464).optional(),
 
   // Telemetry service URLs
   TEMPO_URL: z.url().optional(),

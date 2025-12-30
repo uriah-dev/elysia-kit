@@ -2,7 +2,13 @@
 
 ## Development
 
-To start the development server run:
+First, copy the example environment file and configure your variables:
+
+```bash
+cp .env.example .env
+```
+
+Then start the development server:
 
 ```bash
 bun run dev

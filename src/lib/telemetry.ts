@@ -9,7 +9,7 @@ import type { Elysia, HTTPMethod } from "elysia";
 import { hasValue, buildServiceUrl } from "./utils";
 import { logger } from "./logger";
 
-const traceExporter = env.TRACING_ENABLED
+const traceExporter = env.TRACING_ENABLED && env.TEMPO_OTLP_HTTP_PORT
   ? new OTLPTraceExporter({
     url: env.TEMPO_URL
       ? `${env.TEMPO_URL}/v1/traces`
@@ -17,11 +17,11 @@ const traceExporter = env.TRACING_ENABLED
   })
   : null;
 
-const metricsExporter = env.METRICS_ENABLED
+const metricsExporter = env.METRICS_ENABLED && env.METRICS_EXPORTER_PORT
   ? new PrometheusExporter({ port: env.METRICS_EXPORTER_PORT }, () => {
     logger.info(
       `📊 Prometheus metrics available at ${buildServiceUrl(
-        env.METRICS_EXPORTER_PORT,
+        env.METRICS_EXPORTER_PORT!,
         "/metrics"
       )}`
     );
