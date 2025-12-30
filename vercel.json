@@ -6,7 +6,7 @@
     "devCommand": "bun run dev",
     "outputDirectory": ".",
     "functions": {
-        "api(.*)": {
+        "api/*.js": {
             "memory": 128,
             "maxDuration": 10
         }
