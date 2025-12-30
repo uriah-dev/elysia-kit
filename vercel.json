@@ -4,6 +4,7 @@
     "installCommand": "bun install",
     "buildCommand": "bun build ./api/entry.ts --outfile ./api/index.js --target bun",
     "framework": null,
+    "outputDirectory": ".",
     "rewrites": [
         {
             "source": "/(.*)",
