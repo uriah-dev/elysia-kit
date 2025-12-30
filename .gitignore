@@ -49,3 +49,4 @@ infra/node_modules
 # PM2
 logs/
 dist/
+public
