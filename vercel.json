@@ -3,7 +3,6 @@
     "bunVersion": "1.x",
     "installCommand": "bun install",
     "buildCommand": "bun build ./api/entry.ts --outfile ./api/index.js --target bun --format esm",
-    "outputDirectory": ".",
     "functions": {
         "api/index.js": {
             "runtime": "bun@1.x"
