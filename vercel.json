@@ -5,6 +5,11 @@
     "buildCommand": "bun build ./api/entry.ts --outfile ./api/index.js --target bun --format esm --minify",
     "devCommand": "bun run dev",
     "outputDirectory": ".",
+    "functions": {
+        "test.js": {
+            "runtime": "nodejs24.x"
+        }
+    },
     "rewrites": [
         {
             "source": "/(.*)",
