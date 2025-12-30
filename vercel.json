@@ -7,7 +7,8 @@
     "outputDirectory": ".",
     "functions": {
         "api(.*)": {
-            "runtime": "nodejs24.x"
+            "memory": 128,
+            "maxDuration": 10
         }
     },
     "rewrites": [
