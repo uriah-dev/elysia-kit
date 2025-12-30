@@ -1,72 +1,75 @@
 # Deployment Method Comparison
 
-Choose the deployment method that best fits your needs. This guide compares **PM2** and **Pulumi/Kubernetes** deployments for elysia-kit.
+Choose the deployment method that best fits your needs. This guide compares **Vercel**, **PM2**, and **Pulumi/Kubernetes** deployments for elysia-kit.
 
 ## Quick Comparison
 
-| Feature | PM2 (VPS) | Pulumi/K8s |
-|---------|-----------|------------|
-| **Complexity** | ⭐ Low | ⭐⭐⭐ High |
-| **Setup Time** | ~30 minutes | ~2 hours |
-| **Monthly Cost** | $5-20 | $20-100+ |
-| **Scaling** | Vertical + cluster mode | Horizontal replicas |
-| **Best For** | Solo devs, MVPs, simple apps | Teams, production apps |
-| **Observability** | PM2 monitoring only | Full stack (Prometheus, Grafana, Loki, Tempo) |
+| Feature | Vercel | PM2 (VPS) | Pulumi/K8s |
+|---------|--------|-----------|------------|
+| **Complexity** | ⭐ Minimal | ⭐⭐ Low | ⭐⭐⭐ High |
+| **Setup Time** | ~5 minutes | ~30 minutes | ~2 hours |
+| **Monthly Cost** | Free tier / $20+ | $5-20 | $20-100+ |
+| **Scaling** | Automatic | Vertical + cluster mode | Horizontal replicas |
+| **Best For** | APIs, startups, JAMstack | Solo devs, MVPs | Teams, production apps |
+| **Observability** | Vercel Analytics | PM2 monitoring only | Full stack (Prometheus, Grafana, Loki, Tempo) |
 
 ## Detailed Comparison
 
 ### Infrastructure
 
-| Aspect | PM2 | Pulumi/K8s |
-|--------|-----|------------|
-| **Server Type** | Single VPS | Kubernetes cluster |
-| **Process Manager** | PM2 | Kubernetes |
-| **Reverse Proxy** | Nginx | Traefik Ingress |
-| **SSL/TLS** | Certbot (manual renewal) | cert-manager (auto-renewal) |
-| **Load Balancer** | Nginx upstream | K8s Service |
+| Aspect | Vercel | PM2 | Pulumi/K8s |
+|--------|--------|-----|------------|
+| **Server Type** | Serverless | Single VPS | Kubernetes cluster |
+| **Process Manager** | Managed | PM2 | Kubernetes |
+| **Reverse Proxy** | Edge Network | Nginx | Traefik Ingress |
+| **SSL/TLS** | Automatic | Certbot (manual renewal) | cert-manager (auto-renewal) |
+| **Load Balancer** | Edge Network | Nginx upstream | K8s Service |
 
 ### Deployment
 
-| Aspect | PM2 | Pulumi/K8s |
-|--------|-----|------------|
-| **Deployment Method** | Git pull + PM2 reload | Docker + Pulumi |
-| **Zero Downtime** | ✅ Yes (`pm2 reload`) | ✅ Yes (rolling updates) |
-| **Rollback** | Manual git revert | `pulumi stack select`, `pulumi up` |
-| **CI/CD** | GitHub Actions SSH deploy | GitHub Actions + Docker registry |
-| **Deployment Time** | ~30 seconds | ~2-3 minutes |
+| Aspect | Vercel | PM2 | Pulumi/K8s |
+|--------|--------|-----|------------|
+| **Deployment Method** | Git push / `vc deploy` | Git pull + PM2 reload | Docker + Pulumi |
+| **Zero Downtime** | ✅ Yes | ✅ Yes (`pm2 reload`) | ✅ Yes (rolling updates) |
+| **Rollback** | Dashboard / CLI | Manual git revert | `pulumi stack select`, `pulumi up` |
+| **CI/CD** | GitHub integration | GitHub Actions SSH deploy | GitHub Actions + Docker registry |
+| **Deployment Time** | ~30 seconds | ~30 seconds | ~2-3 minutes |
 
 ### Scaling & Resilience
 
-| Aspect | PM2 | Pulumi/K8s |
-|--------|-----|------------|
-| **Horizontal Scaling** | ❌ No (single server) | ✅ Yes (multiple pods) |
-| **Vertical Scaling** | Resize VPS (requires restart) | Adjust resource limits |
-| **Auto-restart** | ✅ PM2 auto-restart | ✅ K8s restart policy |
-| **Health Checks** | Manual PM2 status | Liveness/readiness probes |
-| **Max Instances** | CPU cores | Limited by cluster capacity |
-| **Cluster Mode** | ✅ PM2 cluster mode | ✅ Native K8s replicas |
+| Aspect | Vercel | PM2 | Pulumi/K8s |
+|--------|--------|-----|------------|
+| **Horizontal Scaling** | ✅ Automatic | ❌ No (single server) | ✅ Yes (multiple pods) |
+| **Vertical Scaling** | Plan-based | Resize VPS (requires restart) | Adjust resource limits |
+| **Auto-restart** | ✅ Automatic | ✅ PM2 auto-restart | ✅ K8s restart policy |
+| **Health Checks** | Automatic | Manual PM2 status | Liveness/readiness probes |
+| **Cold Starts** | ⚠️ Yes | ❌ No | ❌ No |
 
 ### Observability & Monitoring
 
-| Aspect | PM2 | Pulumi/K8s |
-|--------|-----|------------|
-| **Logs** | PM2 logs (file-based) | Loki (centralized) |
-| **Metrics** | PM2 monit | Prometheus + Grafana |
-| **Tracing** | None (add manually) | Tempo (built-in) |
-| **Dashboards** | PM2 CLI only | Grafana web UI |
-| **Alerting** | None (add manually) | Prometheus Alertmanager |
-| **Log Retention** | Disk space limited | Configurable |
+| Aspect | Vercel | PM2 | Pulumi/K8s |
+|--------|--------|-----|------------|
+| **Logs** | Vercel Logs (real-time) | PM2 logs (file-based) | Loki (centralized) |
+| **Metrics** | Vercel Analytics | PM2 monit | Prometheus + Grafana |
+| **Tracing** | ❌ None (add manually) | ❌ None (add manually) | Tempo (built-in) |
+| **Dashboards** | Vercel Dashboard | PM2 CLI only | Grafana web UI |
 
 ### Database
 
-| Aspect | PM2 | Pulumi/K8s |
-|--------|-----|------------|
-| **Recommended** | Managed DB (Neon, Supabase) | Managed DB or StatefulSet |
-| **Local PostgreSQL** | ✅ Supported | ✅ StatefulSet included |
-| **Migrations** | Manual `bun run db:migrate` | Port-forward + manual |
-| **Backup** | Manual or provider-managed | Manual or provider-managed |
+| Aspect | Vercel | PM2 | Pulumi/K8s |
+|--------|--------|-----|------------|
+| **Recommended** | Managed DB (Neon, Vercel Postgres) | Managed DB (Neon, Supabase) | Managed DB or StatefulSet |
+| **Local PostgreSQL** | ❌ Not supported | ✅ Supported | ✅ StatefulSet included |
+| **Migrations** | CI/CD pipeline | Manual `bun run db:migrate` | Port-forward + manual |
 
 ### Cost Breakdown
+
+#### Vercel Deployment
+- **Serverless**: Free tier (100GB bandwidth, 100k requests)
+- **Pro Plan**: $20/month (1TB bandwidth, unlimited requests)
+- **Managed DB** (optional): $0-20/month (Vercel Postgres, Neon)
+- **Domain**: ~$12/year (or free with Vercel subdomain)
+- **Total**: **$0-40/month**
 
 #### PM2 Deployment
 - **VPS**: $5-10/month (DigitalOcean, Vultr, Linode)
@@ -83,20 +86,24 @@ Choose the deployment method that best fits your needs. This guide compares **PM
 - **Storage**: Included in VPS
 - **Total**: **$20-60/month**
 
-### When to Choose PM2
+## When to Choose Each Method
 
-✅ **Choose PM2 if:**
+### ✅ Choose Vercel if:
+- You want the fastest setup with zero infrastructure management
+- You're building an API, startup MVP, or JAMstack app
+- You want automatic scaling without configuration
+- Your workloads are request-response based (not long-running)
+- You prefer managed services over self-hosting
+
+### ✅ Choose PM2 if:
 - You're a solo developer or small team
-- You want simple, fast deployments
+- You want simple, fast deployments with full control
 - Cost is a primary concern
 - You're building an MVP or side project
-- Your traffic is predictable and moderate
-- You don't need advanced observability
+- You need long-running background jobs
 - You're comfortable with SSH and traditional server management
 
-### When to Choose Pulumi/K8s
-
-✅ **Choose Pulumi/K8s if:**
+### ✅ Choose Pulumi/K8s if:
 - You're building a production application for a team
 - You need horizontal scaling capabilities
 - You want comprehensive observability out of the box
@@ -107,45 +114,26 @@ Choose the deployment method that best fits your needs. This guide compares **PM
 
 ## Migration Path
 
-You can start with PM2 and migrate to Kubernetes later:
+You can start simple and migrate as you grow:
 
-1. **Start**: Deploy with PM2 to validate your idea quickly
-2. **Grow**: As traffic increases, upgrade VPS or add PM2 cluster instances
-3. **Scale**: When you need horizontal scaling, migrate to Kubernetes
+1. **Start**: Deploy with Vercel to validate your idea instantly
+2. **Grow**: Move to PM2 if you need persistent connections or lower costs
+3. **Scale**: Migrate to Kubernetes when you need horizontal scaling
 4. **Observe**: Add full observability stack as your team grows
 
-The migration is straightforward because both use:
-- Same Docker container
-- Same environment variables
-- Same database schema
-- Same application code
-
-## Hybrid Approach
-
-You can even run **both** simultaneously:
-- **PM2**: Staging environment on a small VPS
-- **Pulumi/K8s**: Production environment with full observability
-
-## Support & Maintenance
-
-| Aspect | PM2 | Pulumi/K8s |
-|--------|-----|------------|
-| **Learning Curve** | Low (Nginx, PM2, SSH) | High (K8s, Pulumi, Docker) |
-| **Maintenance** | Low (server updates, SSL renewal) | Medium (cluster upgrades, config management) |
-| **Debugging** | Easy (`pm2 logs`, SSH) | Medium (kubectl, pod logs) |
-| **Community** | Large PM2 community | Large K8s community |
-
-## Recommended Workflow by Stage
-
-| Stage | Recommended | Why |
-|-------|-------------|-----|
-| **MVP / Prototype** | PM2 | Fast setup, low cost |
-| **Early Product** | PM2 | Still validating, save costs |
-| **Growing Product** | PM2 or K8s | Choose based on team size |
-| **Scale-up** | Pulumi/K8s | Need horizontal scaling |
-| **Enterprise** | Pulumi/K8s | Full observability, compliance |
-
 ## Quick Start Commands
+
+### Vercel Setup
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Local development
+bun run vercel:dev
+
+# Deploy to production
+bun run vercel:deploy:prod
+```
 
 ### PM2 Setup
 ```bash
@@ -169,4 +157,4 @@ pulumi up
 
 ---
 
-**Still undecided?** Start with PM2. You can always migrate later, and both deployment methods coexist peacefully in this repository.
+**Still undecided?** Start with Vercel for instant deployment. You can always migrate later, and all deployment methods coexist peacefully in this repository.
