@@ -1,0 +1,136 @@
+# Elysia-Kit - LLM Guide
+
+> This file helps AI assistants understand the project structure and how to make modifications.
+
+## Tech Stack
+
+- **Runtime**: Bun
+- **Framework**: Elysia (web framework for Bun)
+- **Database**: PostgreSQL + Drizzle ORM
+- **Observability**: OpenTelemetry (Tempo, Prometheus, Loki, Grafana)
+- **Email**: Resend + React Email
+- **Background Jobs**: Trigger.dev
+- **Rate Limiting**: Arcjet
+
+## Project Structure
+
+```
+elysia-kit/
+├── src/                    # Application source code
+│   ├── index.ts            # Entry point - starts server
+│   ├── env.ts              # Environment validation (Zod schema)
+│   ├── app/                # Elysia application
+│   │   ├── _app.ts         # Main app - registers plugins & routes
+│   │   ├── routes/         # API routes (modular)
+│   │   │   ├── index.ts    # Route exports
+│   │   │   ├── health.ts   # Health check endpoint
+│   │   │   ├── home/       # Route module (index.ts, service.ts, etc.)
+│   │   │   └── user/       # Route module
+│   │   └── components/     # JSX components (Elysia HTML plugin)
+│   ├── lib/                # Shared utilities
+│   │   ├── telemetry.ts    # Tracing & metrics (conditional)
+│   │   ├── logger.ts       # Pino logger (Loki transport)
+│   │   ├── arcjet.ts       # Rate limiting
+│   │   ├── common.ts       # Common response helpers
+│   │   ├── utils.ts        # General utilities
+│   │   └── env-utils.ts    # Environment helpers
+│   ├── db/                 # Database layer
+│   │   ├── index.ts        # Drizzle client
+│   │   ├── schema.ts       # Database schema
+│   │   └── DATABASE.md     # DB configuration guide
+│   ├── emails/             # React Email templates
+│   └── trigger/            # Background job definitions
+├── infra/                  # Pulumi infrastructure (Kubernetes)
+│   └── src/observability/  # Grafana, Prometheus, Loki, Tempo configs
+├── deploy/                 # Deployment guides
+│   ├── pm2/                # PM2 + VPS deployment
+│   └── vercel/             # Vercel serverless deployment
+├── api/                    # Vercel entry point
+│   └── index.ts            # Serverless function wrapper
+└── tests/                  # Test files
+```
+
+## Key Patterns
+
+### Adding a New Route
+
+1. Create a folder in `src/app/routes/<name>/`
+2. Add `index.ts` (route definitions) and `service.ts` (business logic)
+3. Export from `src/app/routes/index.ts`
+4. Register in `src/app/_app.ts` with `.use(routeName)`
+
+Example route structure:
+```typescript
+// src/app/routes/example/index.ts
+import { Elysia, t } from "elysia";
+import { getExample } from "./service";
+
+export const example = new Elysia({ prefix: "/example" })
+  .get("/", () => getExample())
+  .post("/", ({ body }) => createExample(body), {
+    body: t.Object({ name: t.String() })
+  });
+```
+
+### Environment Variables
+
+- All env vars validated via Zod in `src/env.ts`
+- Add new vars to schema, they'll be type-safe via `env.VAR_NAME`
+- Observability flags: `TRACING_ENABLED`, `METRICS_ENABLED`, `LOGGING_ENABLED` (enum: "TRUE" | "FALSE")
+
+### Database Modifications
+
+1. Edit schema in `src/db/schema.ts`
+2. Run `bun run db:generate` to create migration
+3. Run `bun run db:push` or `db:migrate` to apply
+
+### Adding Background Jobs
+
+1. Create job in `src/trigger/<job-name>.ts`
+2. Export from `src/trigger/index.ts`
+3. Use `import { myJob } from "@trigger/job-name"` to call
+
+### Observability
+
+- **Tracing**: Automatic via `@elysiajs/opentelemetry` plugin
+- **Metrics**: Create with `createCounter()`, `createHistogram()`, `createGauge()` from `@lib/telemetry`
+- **Logging**: Use `logger` from `@lib/logger` - sends to Loki when enabled
+
+Each can be disabled independently via env vars.
+
+## Common Scripts
+
+```bash
+bun run dev              # Start dev server with watch
+bun run db:studio        # Open Drizzle Studio GUI
+bun run telemetry:up     # Start observability stack (Docker)
+bun run trigger:dev      # Start Trigger.dev local dev
+bun run email            # Preview email templates
+```
+
+## Path Aliases
+
+```
+@src/     → src/
+@app/     → src/app/
+@lib/     → src/lib/
+@db/      → src/db/
+@routes/  → src/app/routes/
+@trigger/ → src/trigger/
+```
+
+## Deployment Options
+
+1. **Vercel**: Serverless, auto-scales, minimal config
+2. **PM2**: VPS deployment, uses `ecosystem.config.cjs`
+3. **Pulumi/K8s**: Full infrastructure with observability
+
+See `deploy/DEPLOYMENT_COMPARISON.md` for details.
+
+## Modification Guidelines
+
+1. **Keep routes modular** - Each route should be self-contained with its own service layer
+2. **Type everything** - Use Zod for validation, TypeScript for types
+3. **Env vars for config** - Never hardcode URLs, keys, or ports
+4. **Observability is optional** - Code paths must work when tracing/metrics/logging are disabled
+5. **Test before deploy** - Run `bun run build` to catch import issues
