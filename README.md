@@ -16,23 +16,24 @@ bun run dev
 
 ## Database
 
-This project uses **Drizzle ORM** with PostgreSQL by default. Want to use a different database?
+This project uses **Drizzle ORM** with PostgreSQL by default. Want to use a
+different database?
 
-📖 **[Database Configuration Guide](src/db/DATABASE.md)** — Switch to MySQL, SQLite, Turso, Neon, and more
-
+📖 **[Database Configuration Guide](src/db/DATABASE.md)** — Switch to MySQL,
+SQLite, Turso, Neon, and more
 
 ## Deployment
 
 This project supports **three deployment methods** — choose based on your needs:
 
-| Method | Best For | Complexity | Cost |
-|--------|----------|------------|------|
-| **Vercel** | APIs, startups, serverless | Minimal | Free - $20/mo |
-| **PM2** | Simple VPS, solo devs, budget hosting | Low | ~$5/mo |
-| **Pulumi/K8s** | Production apps, teams, full observability | High | ~$20+/mo |
+| Method         | Best For                                   | Complexity | Cost          |
+| -------------- | ------------------------------------------ | ---------- | ------------- |
+| **Vercel**     | APIs, startups, serverless                 | Minimal    | Free - $20/mo |
+| **PM2**        | Simple VPS, solo devs, budget hosting      | Low        | ~$5/mo        |
+| **Pulumi/K8s** | Production apps, teams, full observability | High       | ~$20+/mo      |
 
-📖 **[Deployment Comparison Guide](deploy/DEPLOYMENT_COMPARISON.md)** | 🧹 **[Remove Unwanted Deployment Options](deploy/CLEANUP.md)**
-
+📖 **[Deployment Comparison Guide](deploy/DEPLOYMENT_COMPARISON.md)** | 🧹
+**[Remove Unwanted Deployment Options](deploy/CLEANUP.md)**
 
 ### Option 1: PM2 (Simple VPS)
 
@@ -77,7 +78,8 @@ bun run infra:prod
 
 ## Telemetry & Observability
 
-This project includes a full observability stack with Tempo (tracing), Prometheus (metrics), Loki (logs), and Grafana (visualization).
+This project includes a full observability stack with Tempo (tracing),
+Prometheus (metrics), Loki (logs), and Grafana (visualization).
 
 ### Start Telemetry Services
 
@@ -103,30 +105,36 @@ bun run telemetry:down
 docker compose restart tempo
 ```
 
-**Note:** `prometheus.yml` is auto-generated from the `METRICS_EXPORTER_PORT` environment variable. If you change this port, regenerate the config with `bun run generate:prometheus`.
+**Note:** `prometheus.yml` is auto-generated from the `METRICS_EXPORTER_PORT`
+environment variable. If you change this port, regenerate the config with
+`bun run generate:prometheus`.
 
 ### Optional Observability
 
-Each observability feature can be independently enabled/disabled via environment variables:
+Each observability feature can be independently enabled/disabled via environment
+variables:
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `TRACING_ENABLED` | `true` | Enable/disable distributed tracing (Tempo) |
-| `METRICS_ENABLED` | `true` | Enable/disable Prometheus metrics collection |
-| `LOGGING_ENABLED` | `true` | Enable/disable remote logging to Loki |
+| Variable          | Default | Description                                  |
+| ----------------- | ------- | -------------------------------------------- |
+| `TRACING_ENABLED` | `TRUE`  | Enable/disable distributed tracing (Tempo)   |
+| `METRICS_ENABLED` | `TRUE`  | Enable/disable Prometheus metrics collection |
+| `LOGGING_ENABLED` | `TRUE`  | Enable/disable remote logging to Loki        |
 
 ```bash
 # Example: Disable all observability for lightweight local development
-TRACING_ENABLED=false METRICS_ENABLED=false LOGGING_ENABLED=false bun run dev
+TRACING_ENABLED=FALSE METRICS_ENABLED=FALSE LOGGING_ENABLED=FALSE bun run dev
 
 # Example: Enable only logging for debugging
-TRACING_ENABLED=false METRICS_ENABLED=false LOGGING_ENABLED=true bun run dev
+TRACING_ENABLED=FALSE METRICS_ENABLED=FALSE LOGGING_ENABLED=TRUE bun run dev
 ```
 
 When disabled:
+
 - **Tracing**: The telemetry plugin becomes a no-op
-- **Metrics**: Helper functions (`createCounter`, `createHistogram`, `createGauge`) return no-op implementations
-- **Logging**: Falls back to local `pino-pretty` console output instead of sending to Loki
+- **Metrics**: Helper functions (`createCounter`, `createHistogram`,
+  `createGauge`) return no-op implementations
+- **Logging**: Falls back to local `pino-pretty` console output instead of
+  sending to Loki
 
 ### Service URLs
 
