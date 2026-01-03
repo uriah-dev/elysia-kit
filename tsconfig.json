@@ -3,8 +3,8 @@
     "target": "ES2021",
     "noEmit": true,
     /* Modules */
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "types": [
       "bun-types",
       "react",
