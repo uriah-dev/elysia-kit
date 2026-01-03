@@ -1,3 +1,4 @@
+import { Elysia } from "elysia"; // Required for Vercel build detection
 import { server } from "@app/_app";
 import { env } from "@src/env";
 import { logger } from "@lib/logger";
@@ -9,4 +10,5 @@ export type Server = typeof server;
 // server.listen(PORT);
 
 // logger.info(`🦊 Server is running at ${buildServiceUrl(PORT)}`);
-export default server;
+const app = new Elysia().use(server);
+export default app;
