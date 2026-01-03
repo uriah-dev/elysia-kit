@@ -5,6 +5,10 @@
     "buildCommand": "bun build ./api/index.ts --outfile ./api/index.js --target bun --format esm --minify",
     "devCommand": "bun run dev",
     "outputDirectory": ".",
+    "runtimes": {
+    "api/index.ts": {
+      "runtime": "bun"
+    },
     "rewrites": [
         {
             "source": "/(.*)",
