@@ -39,7 +39,7 @@
     "deploy:pm2": "pm2 deploy ecosystem.config.cjs production",
     "deploy:pm2:setup": "pm2 deploy ecosystem.config.cjs production setup",
     "infra:check": "cd infra && bun run preflight-check.ts",
-    "build": "bun build ./src/index.ts --outdir ./dist --target bun",
+    "build": "bun build ./src/index.ts --outdir ./dist --target bun --format esm --minify",
     "vercel:dev": "vc dev",
     "vercel:deploy": "vc deploy",
     "vercel:deploy:prod": "vc deploy --prod"

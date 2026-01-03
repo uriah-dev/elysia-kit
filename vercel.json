@@ -1,11 +1,4 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
-    "bunVersion": "1.x",
-    "buildCommand": "bun build ./src/index.ts --outfile ./src/index.js --target bun --format esm --minify",
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/src/index.js"
-        }
-    ]
+    "bunVersion": "1.x"
 }
