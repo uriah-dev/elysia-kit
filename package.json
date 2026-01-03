@@ -2,6 +2,7 @@
   "name": "elysia-kit",
   "description": "A modular Elysia boilerplate with Drizzle ORM, full observability (traces/metrics/logs), email templates, background jobs, and flexible deployment options (Vercel, PM2, or Kubernetes).",
   "version": "1.0.3",
+  "type": "module",
   "scripts": {
     "dev": "bun --bun run --watch src/index.ts",
     "test": "bun test",
@@ -76,5 +77,6 @@
     "bun-types": "latest",
     "drizzle-kit": "^0.31.8",
     "react-email": "^5.1.1"
-  }
+  },
+  "module": "src/index.js"
 }
