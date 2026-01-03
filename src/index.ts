@@ -5,7 +5,8 @@ import { buildServiceUrl } from "@lib/utils";
 
 export type Server = typeof server;
 
-const PORT = env.APP_PORT;
-server.listen(PORT);
+// const PORT = env.APP_PORT;
+// server.listen(PORT);
 
-logger.info(`🦊 Server is running at ${buildServiceUrl(PORT)}`);
+// logger.info(`🦊 Server is running at ${buildServiceUrl(PORT)}`);
+export default server;
