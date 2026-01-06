@@ -1,46 +1,39 @@
-# Build stage
-FROM oven/bun:1 AS builder
+# syntax=docker/dockerfile:1
+
+# ---- Build Stage ----
+FROM oven/bun:1-alpine AS builder
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json bun.lock* ./
+COPY package.json bun.lock ./
 
-# Install dependencies
-RUN bun install --frozen-lockfile
+# Install production dependencies only
+RUN bun install --frozen-lockfile --production
 
-# Copy source code
-COPY . .
-
-# Build if needed (add build step here if you have one)
-# RUN bun run build
-
-# Production stage
-FROM oven/bun:1-slim AS runner
+# ---- Production Stage ----
+FROM oven/bun:1-alpine AS production
 
 WORKDIR /app
 
-# Create non-root user (using Debian minimal commands)
-RUN apt-get update && apt-get install -y --no-install-recommends adduser && rm -rf /var/lib/apt/lists/* && \
-    addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 --gid 1001 elysia
+# Copy dependencies and config
+COPY --from=builder /app/node_modules ./node_modules
+COPY package.json tsconfig.json bunfig.toml ./
 
-# Copy built application
-COPY --from=builder --chown=elysia:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=elysia:nodejs /app/src ./src
-COPY --from=builder --chown=elysia:nodejs /app/package.json ./
-COPY --from=builder --chown=elysia:nodejs /app/tsconfig.json ./
-COPY --from=builder --chown=elysia:nodejs /app/drizzle.config.ts ./
+# Copy source code
+COPY src ./src
 
-# Switch to non-root user
-USER elysia
+# Port configuration (override with -e APP_PORT=8080 at runtime)
+ARG APP_PORT=3000
+ENV NODE_ENV=production
+ENV APP_PORT=${APP_PORT}
 
 # Expose port
-EXPOSE 3000
+EXPOSE ${APP_PORT}
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD bun --eval "fetch('http://localhost:3000/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"
+  CMD curl -f http://localhost:3000/health || exit 1
 
-# Start the application
+# Run TypeScript directly (Bun handles it natively)
 CMD ["bun", "run", "src/index.ts"]
